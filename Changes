@@ -1,0 +1,6 @@
+Revision history for Perl extension Net::TacacsPlus::Client.
+
+1.00  Fri Nov  3 13:32:06 2006
+	- original version; created by h2xs 1.23 with options
+		--omit-autoload --omit-XS --name Net::TacacsPlus::Client -b 5.6.0
+
