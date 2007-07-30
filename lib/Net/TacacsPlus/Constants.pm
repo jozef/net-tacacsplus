@@ -140,8 +140,7 @@ This sub is called automaticaly. I loads the constants to caller namespace. I to
 
 =cut
 
-sub import
-{
+sub import {
 	my $pkg = caller;
 
 	foreach my $name (keys %tac_plus_const)

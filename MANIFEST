@@ -3,4 +3,9 @@ Makefile.PL
 MANIFEST
 README
 t/Net-TacacsPlus-Client.t
+t/distribution.t
+t/0-signature.t
+lib/Net/TacacsPlus.pm
 lib/Net/TacacsPlus/Client.pm
+lib/Net/TacacsPlus/Packet.pm
+lib/Net/TacacsPlus/Constants.pm

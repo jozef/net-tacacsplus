@@ -81,8 +81,7 @@ optional parameters: timeout, port
 
 =cut
 
-sub new
-{
+sub new {
 	my $class = shift;
 	my %params = @_;
 	my $self = {};
@@ -108,8 +107,13 @@ sub new
 	return $self;			
 }
 
-sub close()
-{
+=item close()
+
+Close socket connection.
+
+=cut
+
+sub close {
 	my $self = shift;
 
 	if ($self->{'tacacsserver'})
@@ -119,9 +123,12 @@ sub close()
 	}
 }
 
-#
-#
-#
+=item init_tacacs_session()
+
+Inititalize socket connection to tacacs server.
+
+=cut
+
 sub init_tacacs_session
 {
 	my $self = shift;
@@ -143,8 +150,7 @@ authen_type		- TAC_PLUS_AUTHEN_TYPE_ASCII | TAC_PLUS_AUTHEN_TYPE_PAP
 
 =cut
 
-sub authenticate
-{
+sub authenticate {
 	my ($self,$username,$password,$authen_type) = @_;
 
 	INFO "authentication starts\n";
@@ -258,8 +264,7 @@ sub authenticate
 	return 1;
 }
 
-sub DESTROY
-{
+sub DESTROY {
 	my $self = shift;
 
 	$self->close();
