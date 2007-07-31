@@ -1,4 +1,10 @@
-Revision history for Perl extension Net::TacacsPlus::Client.
+Revision history for Perl extension Net::TacacsPlus.
+
+1.02  Mon Jul 30 15:29:00 2007
+    - removed Log4Perl, created Net::TacacsPlus
+    - more pods, tests, cleanup, dependecies fix, MANIFEST fix
+    
+    - this was more cleanup than fixes so that it cpan tests will run fine
 
 1.00  Fri Nov  3 13:32:06 2006
 	- original version; created by h2xs 1.23 with options
