@@ -44,9 +44,8 @@ tac-rfc.1.76.txt, Net::TacacsPlus::Packet
 
 package Net::TacacsPlus::Client;
 
-our $VERSION = '1.00';
+our $VERSION = '1.02';
 
-use Log::Log4perl qw(:nowarn :easy);
 use Carp::Clan;
 use IO::Socket;
 use Exporter;
@@ -100,7 +99,7 @@ sub new {
 	};
 	if ($@)
 	{
-		ERROR "init_tacacs_session: $@\n";
+		#error initializing session
 		undef $self;
 	}
 
@@ -118,7 +117,7 @@ sub close {
 
 	if ($self->{'tacacsserver'})
 	{	
-		if (!close($self->{'tacacsserver'})) { WARN "Error closing IO socket!\n" };
+		if (!close($self->{'tacacsserver'})) { warn "Error closing IO socket!\n" };
 		undef $self->{'tacacsserver'};
 	}
 }
@@ -153,8 +152,6 @@ authen_type		- TAC_PLUS_AUTHEN_TYPE_ASCII | TAC_PLUS_AUTHEN_TYPE_PAP
 sub authenticate {
 	my ($self,$username,$password,$authen_type) = @_;
 
-	INFO "authentication starts\n";
-	
 	eval {
 		#tacacs+ START packet
 		my $pkt;
@@ -206,12 +203,6 @@ sub authenticate {
 						'key' => $self->{'key'},
 						);
 
-			my $server_msg = $reply->server_msg();
-			if ($server_msg)
-			{
-				INFO 'server msg: "'.$reply->server_msg().'"';
-			}
-
 			Net::TacacsPlus::Packet->check_reply($pkt,$reply);
 
 			$status=$reply->status();
@@ -254,7 +245,7 @@ sub authenticate {
 	};
 	if ($@)
 	{
-		ERROR 'communication error "'.$@.'"\n';
+		warn 'communication error "'.$@.'"\n';
 		$errmsg=$@;
 		return undef;
 	}
