@@ -23,7 +23,7 @@ Currently only PAP and ASCII authentication can be used agains Tacacs+ server.
 
 =head1 AUTHOR
 
-Jozef Kutej - jozef.kutej@hp.com
+Jozef Kutej - E<lt>jozef@kutej.netE<gt>
 
 =head1 BUGS
 

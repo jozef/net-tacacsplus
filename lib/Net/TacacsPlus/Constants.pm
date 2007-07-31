@@ -62,7 +62,7 @@ This module will import tacacs+ packet constants defined in tac-rfc.1.76.txt + T
 
 =head1 AUTHOR
 
-Jozef Kutej E<lt>jozef.kutej@hp.comE<gt>
+Jozef Kutej E<lt>jozef@kutej.netE<gt>
 
 =head1 VERSION
 

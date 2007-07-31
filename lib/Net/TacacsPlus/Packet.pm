@@ -46,7 +46,7 @@ from parameters or from raw received packet.
 
 =head1 AUTHOR
 
-Jozef Kutej E<lt>jozef.kutej@hp.comE<gt>
+Jozef Kutej E<lt>jozef@kutej.netE<gt>
 
 =head1 VERSION
 
