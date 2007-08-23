@@ -1,3 +1,7 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
 
 use Test::More;# 'no_plan';
 BEGIN { plan tests => 2 };
