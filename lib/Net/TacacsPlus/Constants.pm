@@ -8,7 +8,7 @@ Net::TacacsPlus::Constants - Tacacs+ packet constants
 
 =head1 DESCRIPTION
 
-This module will import tacacs+ packet constants defined in tac-rfc.1.76.txt + TAC_PLUS_HEADER_SIZE.
+This module will import tacacs+ packet constants defined in tac-rfc.1.78.txt + TAC_PLUS_HEADER_SIZE.
 
 	TAC_PLUS_MAJOR_VER => 0xc,
 	TAC_PLUS_MINOR_VER_DEFAULT => 0x0,
@@ -57,12 +57,42 @@ This module will import tacacs+ packet constants defined in tac-rfc.1.76.txt + T
 	TAC_PLUS_AUTHEN_STATUS_ERROR    => 0x07,
 	TAC_PLUS_AUTHEN_STATUS_FOLLOW   => 0x21,
 
-	TAC_PLUS_HEADER_SIZE			=> 12,
+	TAC_PLUS_AUTHEN_METH_NOT_SET    => 0x00,
+	TAC_PLUS_AUTHEN_METH_NONE       => 0x01,
+	TAC_PLUS_AUTHEN_METH_KRB5       => 0x02,
+	TAC_PLUS_AUTHEN_METH_LINE       => 0x03,
+	TAC_PLUS_AUTHEN_METH_ENABLE     => 0x04,
+	TAC_PLUS_AUTHEN_METH_LOCAL      => 0x05,
+	TAC_PLUS_AUTHEN_METH_TACACSPLUS => 0x06,
+
+	TAC_PLUS_AUTHEN_METH_GUEST      => 0x08,
+	TAC_PLUS_AUTHEN_METH_RADIUS     => 0x10,
+	TAC_PLUS_AUTHEN_METH_KRB4       => 0x11,
+	TAC_PLUS_AUTHEN_METH_RCMD       => 0x20,
+
+	TAC_PLUS_AUTHOR_STATUS_PASS_ADD  => 0x01,
+	TAC_PLUS_AUTHOR_STATUS_PASS_REPL => 0x02,
+	TAC_PLUS_AUTHOR_STATUS_FAIL      => 0x10,
+	TAC_PLUS_AUTHOR_STATUS_ERROR     => 0x11,
+	TAC_PLUS_AUTHOR_STATUS_FOLLOW    => 0x21,
+
+	TAC_PLUS_ACCT_FLAG_MORE          => 0x01, # deprecated
+	TAC_PLUS_ACCT_FLAG_START         => 0x02,
+	TAC_PLUS_ACCT_FLAG_STOP          => 0x04,
+	TAC_PLUS_ACCT_FLAG_WATCHDOG      => 0x08,
+
+	TAC_PLUS_ACCT_STATUS_SUCCESS     => 0x01,
+	TAC_PLUS_ACCT_STATUS_ERROR       => 0x02,
+	TAC_PLUS_ACCT_STATUS_FOLLOW      => 0x21,
+
+	TAC_PLUS_HEADER_SIZE             => 12,
 
 
 =head1 AUTHOR
 
 Jozef Kutej E<lt>jozef@kutej.netE<gt>
+
+Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<gt>
 
 =head1 VERSION
 
@@ -70,7 +100,7 @@ Jozef Kutej E<lt>jozef@kutej.netE<gt>
 
 =head1 SEE ALSO
 
-tac-rfc.1.76.txt, Net::TacacsPlus::Client
+tac-rfc.1.78.txt, Net::TacacsPlus::Client
 
 =cut
 
@@ -78,7 +108,7 @@ package Net::TacacsPlus::Constants;
 
 our $VERSION = '1.00';
 
-# constants from tac-rfc-1.76.txt + TAC_PLUS_HEADER_SIZE
+# constants from tac-rfc-1.78.txt + TAC_PLUS_HEADER_SIZE
 my %tac_plus_const = (
 	TAC_PLUS_MAJOR_VER => 0xc,
 	TAC_PLUS_MINOR_VER_DEFAULT => 0x0,
@@ -127,7 +157,35 @@ my %tac_plus_const = (
 	TAC_PLUS_AUTHEN_STATUS_ERROR    => 0x07,
 	TAC_PLUS_AUTHEN_STATUS_FOLLOW   => 0x21,
 
-	TAC_PLUS_HEADER_SIZE			=> 12,
+	TAC_PLUS_AUTHEN_METH_NOT_SET    => 0x00,
+	TAC_PLUS_AUTHEN_METH_NONE       => 0x01,
+	TAC_PLUS_AUTHEN_METH_KRB5       => 0x02,
+	TAC_PLUS_AUTHEN_METH_LINE       => 0x03,
+	TAC_PLUS_AUTHEN_METH_ENABLE     => 0x04,
+	TAC_PLUS_AUTHEN_METH_LOCAL      => 0x05,
+	TAC_PLUS_AUTHEN_METH_TACACSPLUS => 0x06,
+
+	TAC_PLUS_AUTHEN_METH_GUEST      => 0x08,
+	TAC_PLUS_AUTHEN_METH_RADIUS     => 0x10,
+	TAC_PLUS_AUTHEN_METH_KRB4       => 0x11,
+	TAC_PLUS_AUTHEN_METH_RCMD       => 0x20,
+
+	TAC_PLUS_AUTHOR_STATUS_PASS_ADD  => 0x01,
+	TAC_PLUS_AUTHOR_STATUS_PASS_REPL => 0x02,
+	TAC_PLUS_AUTHOR_STATUS_FAIL      => 0x10,
+	TAC_PLUS_AUTHOR_STATUS_ERROR     => 0x11,
+	TAC_PLUS_AUTHOR_STATUS_FOLLOW    => 0x21,
+
+	TAC_PLUS_ACCT_FLAG_MORE          => 0x01, # deprecated
+	TAC_PLUS_ACCT_FLAG_START         => 0x02,
+	TAC_PLUS_ACCT_FLAG_STOP          => 0x04,
+	TAC_PLUS_ACCT_FLAG_WATCHDOG      => 0x08,
+
+	TAC_PLUS_ACCT_STATUS_SUCCESS     => 0x01,
+	TAC_PLUS_ACCT_STATUS_ERROR       => 0x02,
+	TAC_PLUS_ACCT_STATUS_FOLLOW      => 0x21,
+
+	TAC_PLUS_HEADER_SIZE             => 12,
 );
 
 =head1 METHODS
