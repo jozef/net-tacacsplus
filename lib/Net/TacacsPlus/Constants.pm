@@ -96,7 +96,7 @@ Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<g
 
 =head1 VERSION
 
-1.0
+1.03
 
 =head1 SEE ALSO
 
@@ -106,7 +106,7 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Client
 
 package Net::TacacsPlus::Constants;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 # constants from tac-rfc-1.78.txt + TAC_PLUS_HEADER_SIZE
 my %tac_plus_const = (

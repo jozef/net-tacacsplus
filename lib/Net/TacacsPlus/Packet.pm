@@ -96,7 +96,7 @@ Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<g
 
 =head1 VERSION
 
-1.0
+1.03
 
 =head1 SEE ALSO
 
@@ -106,12 +106,12 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Client
 
 package Net::TacacsPlus::Packet;
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 use Digest::MD5 ('md5');
 use Math::XOR ('xor_buf');
@@ -173,7 +173,7 @@ sub new {
 	#save encryption key
 	$self->{'key'} = $params{'key'};
 
-	if (!$params{'type'}) { croak("TacacsPlus packet type is required parameter."); }
+	if (!$params{'type'}) { die("TacacsPlus packet type is required parameter."); }
 	$self->{'type'} = $params{'type'};
 
 	#create object from raw packet
@@ -208,7 +208,7 @@ sub new {
 		$self->{'body'} = Net::TacacsPlus::PacketAccountRequestBody->new(%params);
 	} else
 	{
-		croak('TacacsPlus packet type '.$params{'type'}.' unsupported.');
+		die('TacacsPlus packet type '.$params{'type'}.' unsupported.');
 	}
 
 	return $self;
@@ -228,10 +228,10 @@ checks sequence number, session id, version and flags
 sub check_reply {
 	my ($self, $snd, $rcv) = @_;
 	
-	if (($snd->seq_no() + 1) != ($rcv->seq_no())) { die "seq_no mismash\n" }
-	if (($snd->session_id()) != ($rcv->session_id())) { die "session_id mismash\n" }
-	if (($snd->version()) != ($rcv->version())) { die "version mismash\n" }	
-	if (($snd->flags()) != ($rcv->flags())) { die "flags mismash\n" }	
+	if (($snd->seq_no() + 1) != ($rcv->seq_no())) { croak("seq_no mismash"); }
+	if (($snd->session_id()) != ($rcv->session_id())) { croak("session_id mismash"); }
+	if (($snd->version()) != ($rcv->version())) { croak("version mismash"); }	
+	if (($snd->flags()) != ($rcv->flags())) { croak("flags mismash"); }	
 }
 
 =item decode_reply($raw_pkt)
@@ -266,7 +266,7 @@ sub decode_reply {
 		$self->{'body'} = Net::TacacsPlus::PacketAccountReplyBody->new('raw_body' => $raw_body);
 	} else
 	{
-		croak('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
+		die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
 	}
 }
 
@@ -421,7 +421,7 @@ sub args()
 		return $self->{'body'}->args();
 	} else
 	{
-		croak("Arguments only available for authorization response packets")
+		die("Arguments only available for authorization response packets")
 	}
 }
 
@@ -469,7 +469,7 @@ sub send() {
 	my $raw_pkt = $self->raw();
 	
 	my $bytes = $remote->send($raw_pkt);
-	die "error sending packet!" if ($bytes != length($raw_pkt));
+	croak("error sending packet!") if ($bytes != length($raw_pkt));
 	
 	return $bytes;
 }
@@ -514,12 +514,12 @@ packet:
 
 package Net::TacacsPlus::PacketHeader;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -708,12 +708,12 @@ REPLY packet) to the client. The REPLY packet body looks as follows:
 
 package Net::TacacsPlus::PacketAuthenReplyBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -832,12 +832,12 @@ The authentication START packet body
 
 package Net::TacacsPlus::PacketAuthenStartBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -941,12 +941,12 @@ Net::TacacsPlus::PacketAuthenContinueBody;
 
 package Net::TacacsPlus::PacketAuthenContinueBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -1041,12 +1041,12 @@ The authorization REQUEST packet body
 
 package Net::TacacsPlus::PacketAuthorRequestBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -1160,12 +1160,12 @@ The authorization RESPONSE packet body
 
 package Net::TacacsPlus::PacketAuthorResponseBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -1317,12 +1317,12 @@ The account REQUEST packet body
 
 package Net::TacacsPlus::PacketAccountRequestBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS
@@ -1434,12 +1434,12 @@ The accounting REPLY packet body
 
 package Net::TacacsPlus::PacketAccountReplyBody;
 
-our $VERSION = '1.00';
+our $VERSION = '1.03';
 
 use strict;
 
 use 5.006;
-use Net::TacacsPlus::Constants;
+use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
 =head1 METHODS

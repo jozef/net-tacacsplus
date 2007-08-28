@@ -19,9 +19,9 @@ For now tacacs client authentication implemented. See L<Net::TacacsPlus::Client>
 
 =cut
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
-use Net::TacacsPlus::Client;
+use Net::TacacsPlus::Client 1.03;
 
 use Exporter;
 use 5.006;
@@ -62,6 +62,6 @@ not known
 
 =head1 SEE ALSO
 
-tac-rfc.1.76.txt
+tac-rfc.1.78.txt
 
 =cut

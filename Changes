@@ -1,5 +1,15 @@
 Revision history for Perl extension Net::TacacsPlus.
 
+1.03  Tue Aug 28 16:08:14 2007
+    - Added TACACS+ authorization and accounting
+    - minor code changes to existing code to be able to 
+      support authorization and accounting
+    - TACACS+ session is now initialized each time a call is 
+      made to authenticate(), authorize() or account() making it
+      possible to reuse the same Net::TacacsPlus::Client object.
+    - rewrote srand generation to make it more portable
+    - rewrote some 'die' statements to 'croak' instead
+
 1.02  Mon Jul 30 15:29:00 2007
     - removed Log4Perl, created Net::TacacsPlus
     - more pods, tests, cleanup, dependecies fix, MANIFEST fix

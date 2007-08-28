@@ -46,6 +46,10 @@ Jozef Kutej - E<lt>jozef@kutej.netE<gt>
 
 Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<gt>
 
+=head1 VERSION
+
+1.03
+
 =head1 BUGS
 
 not known
@@ -63,7 +67,7 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Packet
 
 package Net::TacacsPlus::Client;
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 use Carp::Clan;
 use IO::Socket;
@@ -74,8 +78,8 @@ use Fcntl qw(:DEFAULT);
 @ISA = ('Exporter');
 @EXPORT_OK = ('authenticate', 'authorize', 'account');
 
-use Net::TacacsPlus::Constants;
-use Net::TacacsPlus::Packet;
+use Net::TacacsPlus::Constants 1.03;
+use Net::TacacsPlus::Packet 1.03;
 
 #seed rand for session id generation
 # srand (time ^ $$ ^ unpack "%L*", `ps axww | gzip`);
@@ -149,7 +153,7 @@ sub init_tacacs_session
 	my $remote;
 	$remote = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $self->{'host'},
 					PeerPort => $self->{'port'}, Timeout => $self->{'timeout'});
-	if (!$remote) { die("unable to connect to " . $self->{'host'} . ":" . $self->{'port'} . "\n"); }
+	if (!$remote) { croak("unable to connect to " . $self->{'host'} . ":" . $self->{'port'} . "\n"); }
 
 	$self->{'tacacsserver'} = $remote;
 	$self->{'session_id'} = int(rand(2 ** 32 - 1));	#2 ** 32 - 1
@@ -218,7 +222,7 @@ sub authenticate {
 				'password' => $password,
 				'rem_addr' => inet_ntoa($self->{'tacacsserver'}->sockaddr)
 				);
-		} else { die ('unsupported "authen_type" '.$authen_type.'.'); }
+		} else { croak ('unsupported "authen_type" '.$authen_type.'.'); }
 
 		$pkt->send($self->{'tacacsserver'});
 
@@ -227,7 +231,7 @@ sub authenticate {
 			#receive reply packet
 			my $raw_reply;
 			$self->{'tacacsserver'}->recv($raw_reply,1024);
-			die "reply read error ($raw_reply)." if not length($raw_reply);
+			croak ("reply read error ($raw_reply).") if not length($raw_reply);
 
 			$reply = Net::TacacsPlus::Packet->new(
 						'type' => TAC_PLUS_AUTHEN,
@@ -267,12 +271,12 @@ sub authenticate {
 				$pkt->send($self->{'tacacsserver'});
 			} elsif ($status == TAC_PLUS_AUTHEN_STATUS_ERROR)
 			{
-				die('authen status - error');
+				croak('authen status - error');
 			} elsif (($status == TAC_PLUS_AUTHEN_STATUS_FAIL) || ($status == TAC_PLUS_AUTHEN_STATUS_PASS))
 			{
 			} else
 			{
-				die('unhandled status '.(0 + $status).'');
+				croak('unhandled status '.(0 + $status).'');
 			}
 		} while (($status != TAC_PLUS_AUTHEN_STATUS_FAIL) && ($status != TAC_PLUS_AUTHEN_STATUS_PASS))
 	};
@@ -326,7 +330,7 @@ sub authorize
 		#receive reply packet
 		my $raw_reply;
 		$self->{'tacacsserver'}->recv($raw_reply,1024);
-		die "reply read error ($raw_reply)." if not length($raw_reply);
+		croak("reply read error ($raw_reply).") if not length($raw_reply);
 
 		$reply = Net::TacacsPlus::Packet->new(
 					'type' => TAC_PLUS_AUTHOR,
@@ -340,7 +344,7 @@ sub authorize
 		$status = $reply->status();
 		if ($status == TAC_PLUS_AUTHOR_STATUS_ERROR)
 		{
-			die('author status - error'); 
+			croak('author status - error'); 
 		} elsif ($status == TAC_PLUS_AUTHOR_STATUS_PASS_ADD ||
 			$status == TAC_PLUS_AUTHOR_STATUS_PASS_REPL)
 		{
@@ -349,7 +353,7 @@ sub authorize
 		{
 		} else
 		{
-			die('unhandled status '.(0 + $status).'');
+			croak('unhandled status '.(0 + $status).'');
 		}
 	};
 	if ($@)
@@ -423,7 +427,7 @@ sub account
 		#receive reply packet
 		my $raw_reply;
 		$self->{'tacacsserver'}->recv($raw_reply,1024);
-		die "reply read error ($raw_reply)." if not length($raw_reply);
+		croak("reply read error ($raw_reply).") if not length($raw_reply);
 
 		$reply = Net::TacacsPlus::Packet->new(
 					'type' => TAC_PLUS_ACCT,
@@ -437,12 +441,12 @@ sub account
 		$status = $reply->status();
 		if ($status == TAC_PLUS_ACCT_STATUS_ERROR)
 		{
-			die('account status - error'); 
+			croak('account status - error'); 
 		} elsif ($status == TAC_PLUS_ACCT_STATUS_SUCCESS)
 		{
 		} else
 		{
-			die('unhandled status '.(0 + $status).'');
+			croak('unhandled status '.(0 + $status).'');
 		}
 	};
 	if ($@)
