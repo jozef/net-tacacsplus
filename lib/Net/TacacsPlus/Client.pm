@@ -50,10 +50,6 @@ Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<g
 
 1.03
 
-=head1 BUGS
-
-not known
-
 =head1 SEE ALSO
 
 tac-rfc.1.78.txt, Net::TacacsPlus::Packet
@@ -81,15 +77,6 @@ use Fcntl qw(:DEFAULT);
 use Net::TacacsPlus::Constants 1.03;
 use Net::TacacsPlus::Packet 1.03;
 
-#seed rand for session id generation
-# srand (time ^ $$ ^ unpack "%L*", `ps axww | gzip`);
-if (-r '/dev/urandom')
-{
-	sysopen(fhRANDOM, '/dev/urandom', O_RDONLY);
-	sysread(fhRANDOM, $rand, 1024);
-	close(fhRANDOM);
-	srand(unpack('%L*', $rand));
-}
 
 =head1 METHODS
 

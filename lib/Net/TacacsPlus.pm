@@ -56,10 +56,6 @@ sub tacacs_client {
 
 Jozef Kutej - E<lt>jozef@kutej.netE<gt>
 
-=head1 BUGS
-
-not known
-
 =head1 SEE ALSO
 
 tac-rfc.1.78.txt

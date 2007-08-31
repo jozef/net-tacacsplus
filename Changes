@@ -7,7 +7,7 @@ Revision history for Perl extension Net::TacacsPlus.
     - TACACS+ session is now initialized each time a call is 
       made to authenticate(), authorize() or account() making it
       possible to reuse the same Net::TacacsPlus::Client object.
-    - rewrote srand generation to make it more portable
+    - removed srand because not needed according to the rand perl doc
     - rewrote some 'die' statements to 'croak' instead
 
 1.02  Mon Jul 30 15:29:00 2007
