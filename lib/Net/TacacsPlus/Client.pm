@@ -365,6 +365,12 @@ sub authorize
 	return $status;
 }
 
+=item check_args([])
+
+Check if the arguments comply with RFC.
+
+=cut
+
 sub check_args
 {
 	my $args = shift;
