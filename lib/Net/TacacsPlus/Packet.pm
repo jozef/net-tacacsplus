@@ -109,6 +109,7 @@ package Net::TacacsPlus::Packet;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -517,6 +518,7 @@ package Net::TacacsPlus::PacketHeader;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -711,6 +713,7 @@ package Net::TacacsPlus::PacketAuthenReplyBody;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -835,6 +838,7 @@ package Net::TacacsPlus::PacketAuthenStartBody;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -898,8 +902,8 @@ sub raw {
 		length($self->{'user'}),
 		length($self->{'port'}),
 		length($self->{'rem_addr'}),
-		0, # data length is zero in authentication start packet
-	).$self->{'user'}.$self->{'port'}.$self->{'rem_addr'};
+		length($self->{'password'}),
+	).$self->{'user'}.$self->{'port'}.$self->{'rem_addr'}.$self->{'password'};
 
 	return $body;
 }
@@ -944,6 +948,7 @@ package Net::TacacsPlus::PacketAuthenContinueBody;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -1044,6 +1049,7 @@ package Net::TacacsPlus::PacketAuthorRequestBody;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -1163,6 +1169,7 @@ package Net::TacacsPlus::PacketAuthorResponseBody;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -1320,6 +1327,7 @@ package Net::TacacsPlus::PacketAccountRequestBody;
 our $VERSION = '1.03';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
@@ -1434,9 +1442,10 @@ The accounting REPLY packet body
 
 package Net::TacacsPlus::PacketAccountReplyBody;
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 use strict;
+use warnings;
 
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;

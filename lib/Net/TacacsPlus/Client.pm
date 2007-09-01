@@ -63,7 +63,10 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Packet
 
 package Net::TacacsPlus::Client;
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
+
+use strict;
+use warnings;
 
 use Carp::Clan;
 use IO::Socket;
@@ -71,8 +74,8 @@ use Exporter;
 use 5.006;
 use Fcntl qw(:DEFAULT);
 
-@ISA = ('Exporter');
-@EXPORT_OK = ('authenticate', 'authorize', 'account');
+our @ISA = ('Exporter');
+our @EXPORT_OK = ('authenticate', 'authorize', 'account');
 
 use Net::TacacsPlus::Constants 1.03;
 use Net::TacacsPlus::Packet 1.03;
@@ -107,7 +110,7 @@ sub new {
 	$self->{'port'} = $params{'port'} ? $params{'port'} : 'tacacs';
 	$self->{'host'} = $params{'host'};
 	$self->{'key'} = $params{'key'};
-	
+
 	return $self;
 }
 
@@ -140,8 +143,9 @@ sub init_tacacs_session
 	my $remote;
 	$remote = IO::Socket::INET->new(Proto => "tcp", PeerAddr => $self->{'host'},
 					PeerPort => $self->{'port'}, Timeout => $self->{'timeout'});
-	if (!$remote) { croak("unable to connect to " . $self->{'host'} . ":" . $self->{'port'} . "\n"); }
-
+	croak("unable to connect to " . $self->{'host'} . ":" . $self->{'port'} . "\n")
+		if not defined $remote;
+	
 	$self->{'tacacsserver'} = $remote;
 	$self->{'session_id'} = int(rand(2 ** 32 - 1));	#2 ** 32 - 1
 	$self->{'seq_no'} = 1;
@@ -172,9 +176,12 @@ authen_type		- TAC_PLUS_AUTHEN_TYPE_ASCII | TAC_PLUS_AUTHEN_TYPE_PAP
 sub authenticate {
 	my ($self,$username,$password,$authen_type) = @_;
 
+	#init session. will die if unable to connect.
+	$self->init_tacacs_session();
+
+	my $status;
 	eval {
 		#tacacs+ START packet
-		$self->init_tacacs_session();
 		my $pkt;
 
 		if ($authen_type == TAC_PLUS_AUTHEN_TYPE_ASCII)
@@ -209,18 +216,20 @@ sub authenticate {
 				'password' => $password,
 				'rem_addr' => inet_ntoa($self->{'tacacsserver'}->sockaddr)
 				);
-		} else { croak ('unsupported "authen_type" '.$authen_type.'.'); }
+		} else {
+			croak ('unsupported "authen_type" '.$authen_type.'.');
+		}
 
 		$pkt->send($self->{'tacacsserver'});
 
-		#loop through REPLY/CONNTINUE packets
+		#loop through REPLY/CONTINUE packets
 		do {
 			#receive reply packet
 			my $raw_reply;
 			$self->{'tacacsserver'}->recv($raw_reply,1024);
 			croak ("reply read error ($raw_reply).") if not length($raw_reply);
 
-			$reply = Net::TacacsPlus::Packet->new(
+			my $reply = Net::TacacsPlus::Packet->new(
 						'type' => TAC_PLUS_AUTHEN,
 						'raw' => $raw_reply,
 						'key' => $self->{'key'},
@@ -273,7 +282,7 @@ sub authenticate {
 		$self->close();
 		return undef;
 	}
-
+	
 	$self->close();
 	return undef if $status == TAC_PLUS_AUTHEN_STATUS_FAIL;
 
@@ -292,7 +301,8 @@ args			- tacacs+ authorization arguments
 sub authorize
 {
 	my ($self,$username,$args) = @_;
-	
+
+	my $status;	
 	eval {
 		check_args($args);
 		$self->init_tacacs_session();
@@ -319,7 +329,7 @@ sub authorize
 		$self->{'tacacsserver'}->recv($raw_reply,1024);
 		croak("reply read error ($raw_reply).") if not length($raw_reply);
 
-		$reply = Net::TacacsPlus::Packet->new(
+		my $reply = Net::TacacsPlus::Packet->new(
 					'type' => TAC_PLUS_AUTHOR,
 					'raw' => $raw_reply,
 					'key' => $self->{'key'},
@@ -390,6 +400,7 @@ sub account
 {
 	my ($self,$username,$args,$flags) = @_;
 	
+	my $status;
 	eval {
 		$self->init_tacacs_session();
 
@@ -416,7 +427,7 @@ sub account
 		$self->{'tacacsserver'}->recv($raw_reply,1024);
 		croak("reply read error ($raw_reply).") if not length($raw_reply);
 
-		$reply = Net::TacacsPlus::Packet->new(
+		my $reply = Net::TacacsPlus::Packet->new(
 					'type' => TAC_PLUS_ACCT,
 					'raw' => $raw_reply,
 					'key' => $self->{'key'},

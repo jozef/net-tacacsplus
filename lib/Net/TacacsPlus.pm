@@ -19,15 +19,18 @@ For now tacacs client authentication implemented. See L<Net::TacacsPlus::Client>
 
 =cut
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
-use Net::TacacsPlus::Client 1.03;
+use strict;
+use warnings;
+
+use Net::TacacsPlus::Client 1.04;
 
 use Exporter;
 use 5.006;
 
-@ISA = ('Exporter');
-@EXPORT_OK = ('tacacs_client');
+our @ISA = ('Exporter');
+our @EXPORT_OK = ('tacacs_client');
 
 =head1 FUNCTIONS
 
