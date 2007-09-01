@@ -1,5 +1,10 @@
 Revision history for Perl extension Net::TacacsPlus.
 
+1.04  Sun Sep 02 00:48:00 2007
+    - use strict !!! for ::Client...
+    - fixed broken authentication
+    - real authentication done in tests when ENV set properly
+
 1.03  Tue Aug 28 16:08:14 2007
     - Added TACACS+ authorization and accounting
     - minor code changes to existing code to be able to 
