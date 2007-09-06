@@ -23,7 +23,7 @@ isa_ok($client, 'Net::TacacsPlus::Client');
 #online test to create ::Client object and connect to tacacs server
 SKIP: {
 
-	skip "skipping online tests. set TACACS_SERVER, TACACS_SECRET, TACACS_USER environmental variables to activate them.", 1
+	skip "skipping online tests. set TACACS_SERVER, TACACS_SECRET, TACACS_USER environmental variables to activate them.", 7
 		if (!$ENV{'TACACS_SERVER'}
 			or !$ENV{'TACACS_SECRET'}
 			or !$ENV{'TACACS_USER'}
@@ -60,6 +60,7 @@ SKIP: {
 	}
 	else {
 		ok(1, 'skipping PAP authentication test, TACACS_PAP_PASSWORD enviromental variable not set');
+		ok(1, 'skipping PAP authentication test, TACACS_PAP_PASSWORD enviromental variable not set');
 	}
 
 	if ($ENV{'TACACS_ASCII_PASSWORD'}) {
@@ -79,6 +80,7 @@ SKIP: {
 		);
 	}
 	else {
+		ok(1, 'skipping ASCII authentication test, TACACS_ASCII_PASSWORD enviromental variable not set');
 		ok(1, 'skipping ASCII authentication test, TACACS_ASCII_PASSWORD enviromental variable not set');
 	}
 

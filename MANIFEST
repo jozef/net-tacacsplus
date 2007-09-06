@@ -9,3 +9,11 @@ lib/Net/TacacsPlus.pm
 lib/Net/TacacsPlus/Client.pm
 lib/Net/TacacsPlus/Packet.pm
 lib/Net/TacacsPlus/Constants.pm
+lib/Net/TacacsPlus/Packet/AccountReplyBody.pm
+lib/Net/TacacsPlus/Packet/AccountRequestBody.pm
+lib/Net/TacacsPlus/Packet/AuthenContinueBody.pm
+lib/Net/TacacsPlus/Packet/AuthenReplyBody.pm
+lib/Net/TacacsPlus/Packet/AuthenStartBody.pm
+lib/Net/TacacsPlus/Packet/AuthorRequestBody.pm
+lib/Net/TacacsPlus/Packet/AuthorResponseBody.pm
+lib/Net/TacacsPlus/Packet/Header.pm
