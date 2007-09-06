@@ -1,3 +1,5 @@
+package Net::TacacsPlus::Packet::AuthenReplyBody;
+
 =head1 NAME
 
 Net::TacacsPlus::Packet::AuthenReplyBody;
@@ -21,7 +23,6 @@ REPLY packet) to the client. The REPLY packet body looks as follows:
 
 =cut
 
-package Net::TacacsPlus::Packet::AuthenReplyBody;
 
 our $VERSION = '1.03';
 
@@ -79,7 +80,9 @@ sub decode {
 	$data_len,
 	$payload,
 	) = unpack("CCnnA*", $raw_data);
-	
+
+	$payload = '' if not defined $payload; #payload can be empty
+
 	($self->{'server_msg'},
 	$self->{'data'}) = unpack("A".$server_msg_len."A".$data_len,$payload);
 }

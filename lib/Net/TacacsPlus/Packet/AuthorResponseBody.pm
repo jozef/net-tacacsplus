@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::AuthorResponseBody;
 
 =head1 NAME
 
-Net::TacacsPlus::PacketAuthorResponseBody;
+Net::TacacsPlus::Packet::AuthorResponseBody;
 
 =head1 DESCRIPTION
 
