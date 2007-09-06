@@ -88,8 +88,8 @@ SKIP: {
 	diag('Accounting tests.');
 
 	if ($ENV{'TACACS_CMD'} and exists $ENV{'TACACS_CMD_ARG'}) {
-	    my $args = ['service=shell', 'cmd='.$ENV{'TACACS_CMD'}, 'cmd-arg='.$ENV{'TACACS_CMD_ARG'}];
-	    ok($client->account($ENV{'TACACS_USER'}, $args), 'account: '.join(' ', @$args));
+	    my @args = ( 'service=shell', 'cmd='.$ENV{'TACACS_CMD'}, 'cmd-arg='.$ENV{'TACACS_CMD_ARG'} );
+	    ok($client->account($ENV{'TACACS_USER'}, \@args), 'account: '.join(' ', @args));
 	}
 	else {
 		ok(1, 'skipping accounting test, set TACACS_CMD and TACACS_CMD_ARG to activate it.');
@@ -99,12 +99,12 @@ SKIP: {
 	diag('Authorization tests.');
 	
 	if ($ENV{'TACACS_CMD'} and exists $ENV{'TACACS_CMD_ARG'}) {
-	    my $args = ['service=shell', 'cmd='.$ENV{'TACACS_CMD'}, 'cmd-arg='.$ENV{'TACACS_CMD_ARG'}];
-	    my $args_response = [];
+	    my @args = ( 'service=shell', 'cmd='.$ENV{'TACACS_CMD'}, 'cmd-arg='.$ENV{'TACACS_CMD_ARG'} );
+	    my @args_response;
 
-		ok($client->authorize($ENV{'TACACS_USER'}, $args, $args_response), 'authorize: '.join(' ', @$args).' '.$client->errmsg);
+		ok($client->authorize($ENV{'TACACS_USER'}, \@args, \@args_response), 'authorize: '.join(' ', @args).' '.$client->errmsg);
 
-	    diag('# Authorization response arguments: '.join(' ', @$args_response));
+	    diag('# Authorization response arguments: '.join(' ', @args_response));
 	}
 	else {
 		ok(1, 'skipping authorization test, set TACACS_CMD and TACACS_CMD_ARG to activate it.');

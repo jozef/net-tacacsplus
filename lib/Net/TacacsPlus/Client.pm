@@ -17,9 +17,9 @@ Net::TacacsPlus::Client - Tacacs+ client library
 		print "Authentication failed: ".$tac->errmsg()."\n";         
 	}                                                           
 
-	my $args = ['service=shell', 'cmd=ping', 'cmd-arg=10.0.0.1'];
-	my $args_response;
-	if($tac->authorize($username, $args, $args_response))
+	my @args = ( 'service=shell', 'cmd=ping', 'cmd-arg=10.0.0.1' );
+	my @args_response;
+	if($tac->authorize($username, \@args, \@args_response))
 	{
 		print "Authorization successful.\n";
 		print "Arguments received from server:\n";
@@ -29,8 +29,8 @@ Net::TacacsPlus::Client - Tacacs+ client library
 		print "Authorization failed: " . $tac->errmsg() . "\n";
 	}
 
-	$args = ['service=shell', 'cmd=ping', 'cmd-arg=10.0.0.1'];
-	if($tac->account($username, $args))
+	@args = ( 'service=shell', 'cmd=ping', 'cmd-arg=10.0.0.1' );
+	if($tac->account($username, \@args))
 	{
 		print "Accounting successful.\n";
 	} else {
