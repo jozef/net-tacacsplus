@@ -19,12 +19,12 @@ For now tacacs client authentication implemented. See L<Net::TacacsPlus::Client>
 
 =cut
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 use strict;
 use warnings;
 
-use Net::TacacsPlus::Client 1.04;
+use Net::TacacsPlus::Client 1.05;
 
 use Exporter;
 use 5.006;

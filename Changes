@@ -1,5 +1,12 @@
 Revision history for Perl extension Net::TacacsPlus.
 
+1.05  Fri Sep 07 21:20:00 2007
+	- authorize no more modifies args but has optional thirt parameter to return back the args from server
+	- tests for authorization and accounting
+	- separated Packet packages to more files
+	- ASCII authentication uninitialized variable fix
+	- ASCII authentication test
+
 1.04  Sun Sep 02 00:48:00 2007
     - use strict !!! for ::Client...
     - fixed broken authentication
