@@ -59,8 +59,10 @@ SKIP: {
 		);
 	}
 	else {
-		ok(1, 'skipping PAP authentication test, TACACS_PAP_PASSWORD enviromental variable not set');
-		ok(1, 'skipping PAP authentication test, TACACS_PAP_PASSWORD enviromental variable not set');
+		diag('skipping PAP authentication test, TACACS_PAP_PASSWORD enviromental variable not set');
+		ok(1);
+		diag('skipping PAP authentication test, TACACS_PAP_PASSWORD enviromental variable not set');
+		ok(1);
 	}
 
 	if ($ENV{'TACACS_ASCII_PASSWORD'}) {
@@ -80,8 +82,10 @@ SKIP: {
 		);
 	}
 	else {
-		ok(1, 'skipping ASCII authentication test, TACACS_ASCII_PASSWORD enviromental variable not set');
-		ok(1, 'skipping ASCII authentication test, TACACS_ASCII_PASSWORD enviromental variable not set');
+		diag('skipping ASCII authentication test, TACACS_ASCII_PASSWORD enviromental variable not set');
+		ok(1);
+		diag('skipping ASCII authentication test, TACACS_ASCII_PASSWORD enviromental variable not set');
+		ok(1);
 	}
 
 
@@ -92,7 +96,8 @@ SKIP: {
 	    ok($client->account($ENV{'TACACS_USER'}, \@args), 'account: '.join(' ', @args));
 	}
 	else {
-		ok(1, 'skipping accounting test, set TACACS_CMD and TACACS_CMD_ARG to activate it.');
+		diag('skipping accounting test, set TACACS_CMD and TACACS_CMD_ARG to activate it.');
+		ok(1);
 	}
 
 
@@ -107,7 +112,8 @@ SKIP: {
 	    diag('# Authorization response arguments: '.join(' ', @args_response));
 	}
 	else {
-		ok(1, 'skipping authorization test, set TACACS_CMD and TACACS_CMD_ARG to activate it.');
+		diag('skipping authorization test, set TACACS_CMD and TACACS_CMD_ARG to activate it.');
+		ok(1);
 	}
 
 }
