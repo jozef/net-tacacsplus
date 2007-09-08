@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::AuthorRequestBody;
 
 =head1 NAME
 
-Net::TacacsPlus::Packet::AuthorRequestBody;
+Net::TacacsPlus::Packet::AuthorRequestBody - Tacacs+ authorization request body 
 
 =head1 DESCRIPTION
 

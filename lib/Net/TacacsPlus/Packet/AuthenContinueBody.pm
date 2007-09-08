@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::AuthenContinueBody;
 
 =head1 NAME
 
-Net::TacacsPlus::Packet::AuthenContinueBody;
+Net::TacacsPlus::Packet::AuthenContinueBody - Tacacs+ authentication continue body
 
 =head1 DESCRIPTION
 

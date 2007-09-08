@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::AuthenReplyBody;
 
 =head1 NAME
 
-Net::TacacsPlus::Packet::AuthenReplyBody;
+Net::TacacsPlus::Packet::AuthenReplyBody - Tacacs+ authentication replay body
 
 =head1 DESCRIPTION
 

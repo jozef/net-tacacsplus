@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::AccountReplyBody;
 
 =head1 NAME
 
-Net::TacacsPlus::Packet::AccountReplyBody;
+Net::TacacsPlus::Packet::AccountReplyBody - Tacacs+ accounting reply body
 
 =head1 DESCRIPTION
 

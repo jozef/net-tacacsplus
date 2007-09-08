@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::Header;
 
 =head1 NAME
 
-Net::TacacsPlus::Packet::Header
+Net::TacacsPlus::Packet::Header - Tacacs+ packet header
 
 =head1 DESCRIPTION
 
