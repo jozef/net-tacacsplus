@@ -59,6 +59,8 @@ sub tacacs_client {
 
 Jozef Kutej - E<lt>jozef@kutej.netE<gt>
 
+Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
+
 =head1 SEE ALSO
 
 tac-rfc.1.78.txt

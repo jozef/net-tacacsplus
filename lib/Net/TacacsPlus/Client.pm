@@ -23,8 +23,7 @@ Net::TacacsPlus::Client - Tacacs+ client library
 	{
 		print "Authorization successful.\n";
 		print "Arguments received from server:\n";
-		# $args is overwritten with arguments sent in server response (if any)
-		print join("\n", @{$args});
+		print join("\n", @{$args_response});
 	} else {
 		print "Authorization failed: " . $tac->errmsg() . "\n";
 	}
@@ -45,7 +44,7 @@ Currently only PAP and ASCII authentication can be used agains Tacacs+ server.
 
 Jozef Kutej - E<lt>jozef@kutej.netE<gt>
 
-Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<gt>
+Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
 
 =head1 VERSION
 

@@ -94,7 +94,7 @@ from parameters or from raw received packet.
 
 Jozef Kutej E<lt>jozef@kutej.netE<gt>
 
-Authorization and Accounting contributed by Rubio Vaughan <lt>rubio@passim.net<gt>
+Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
 
 =head1 VERSION
 
