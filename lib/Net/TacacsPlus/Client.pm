@@ -48,7 +48,7 @@ Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE
 
 =head1 VERSION
 
-1.03
+1.05
 
 =head1 SEE ALSO
 
@@ -107,7 +107,7 @@ sub new {
 	bless $self, $class;
 	
 	$self->{'timeout'} = $params{'timeout'} ? $params{'timeout'} : 15;
-	$self->{'port'} = $params{'port'} ? $params{'port'} : 'tacacs';
+	$self->{'port'} = $params{'port'} ? $params{'port'} : '49';
 	$self->{'host'} = $params{'host'};
 	$self->{'key'} = $params{'key'};
 

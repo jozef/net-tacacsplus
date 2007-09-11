@@ -98,7 +98,7 @@ Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE
 
 =head1 VERSION
 
-1.03
+1.05
 
 =head1 SEE ALSO
 
