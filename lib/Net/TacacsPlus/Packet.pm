@@ -185,16 +185,17 @@ sub new {
 	#save encryption key
 	$self->{'key'} = $params{'key'};
 
-	if (!$params{'type'}) { die("TacacsPlus packet type is required parameter."); }
-	$self->{'type'} = $params{'type'};
-
 	#create object from raw packet
-	if ($params{'raw'})
-	{
-		$self->decode_reply($params{'raw'});
+	if ($params{'raw'}) {
+		$self->decode_raw($params{'raw'});
 		
 		return $self;	
 	}
+
+	croak "TacacsPlus packet type is required parameter."
+		if (not exists $params{'type'});
+	
+	$self->{'type'} = $params{'type'};
 
 	#compute version byte
 	$params{'major_version'} = $params{'major_version'} ? $params{'major_version'} : TAC_PLUS_MAJOR_VER;
@@ -220,7 +221,7 @@ sub new {
 		$self->{'body'} = Net::TacacsPlus::Packet::AccountRequestBody->new(%params);
 	} else
 	{
-		die('TacacsPlus packet type '.$params{'type'}.' unsupported.');
+		croak('TacacsPlus packet type '.$params{'type'}.' unsupported.');
 	}
 
 	return $self;
@@ -246,7 +247,7 @@ sub check_reply {
 	if (($snd->flags()) != ($rcv->flags())) { croak("flags mismash"); }	
 }
 
-=item decode_reply($raw_pkt)
+=item decode_raw($raw_pkt)
 
 From raw packet received create reply object:
 Net::TacacsPlus::Packet::AuthenReplyBody or
@@ -255,7 +256,7 @@ Net::TacacsPlus::Packet::AccountReplyBody
 
 =cut
 
-sub decode_reply {
+sub decode_raw {
 	my ($self, $raw_pkt) = @_;
 	
 	my ($raw_header,$raw_body) = unpack("A".TAC_PLUS_HEADER_SIZE."A*",$raw_pkt);
@@ -267,18 +268,38 @@ sub decode_reply {
 	$self->{'type'} = $self->{'header'}->type();
 
 	$raw_body = $self->raw_xor_body($raw_body);
-	if ($self->{'type'} == TAC_PLUS_AUTHEN)
-	{
-		$self->{'body'} = Net::TacacsPlus::Packet::AuthenReplyBody->new('raw_body' => $raw_body);	
-	} elsif ($self->{'type'} == TAC_PLUS_AUTHOR)
-	{
-		$self->{'body'} = Net::TacacsPlus::Packet::AuthorResponseBody->new('raw_body' => $raw_body);
-	} elsif ($self->{'type'} == TAC_PLUS_ACCT)
-	{
-		$self->{'body'} = Net::TacacsPlus::Packet::AccountReplyBody->new('raw_body' => $raw_body);
-	} else
-	{
-		die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
+	
+	#odd sequence numbers belong to client
+	if ($self->{'seq_no'} % 2 == 1) {
+		if ($self->{'type'} == TAC_PLUS_AUTHEN)
+		{
+			$self->{'body'} = Net::TacacsPlus::Packet::AuthenReplyBody->new('raw_body' => $raw_body);	
+		} elsif ($self->{'type'} == TAC_PLUS_AUTHOR)
+		{
+			$self->{'body'} = Net::TacacsPlus::Packet::AuthorResponseBody->new('raw_body' => $raw_body);
+		} elsif ($self->{'type'} == TAC_PLUS_ACCT)
+		{
+			$self->{'body'} = Net::TacacsPlus::Packet::AccountReplyBody->new('raw_body' => $raw_body);
+		} else
+		{
+			die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
+		}
+	}
+	#even sequence numbers belong to server
+	else {
+		if ($self->{'type'} == TAC_PLUS_AUTHEN)
+		{
+			$self->{'body'} = Net::TacacsPlus::Packet::AuthenRequestBody->new('raw_body' => $raw_body);	
+		} elsif ($self->{'type'} == TAC_PLUS_AUTHOR)
+		{
+			$self->{'body'} = Net::TacacsPlus::Packet::AuthorRequestBody->new('raw_body' => $raw_body);
+		} elsif ($self->{'type'} == TAC_PLUS_ACCT)
+		{
+			$self->{'body'} = Net::TacacsPlus::Packet::AccountRequestBody->new('raw_body' => $raw_body);
+		} else
+		{
+			die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
+		}
 	}
 }
 

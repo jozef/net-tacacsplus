@@ -2,8 +2,10 @@ package POE::Filter::TacacsPlus;
 
 sub new {
 	my $class = shift;
+	my $type  = shift;
 	
-	my $self = {};
+	my $self = {
+	};
 	
 	bless $self, $class;
 	
@@ -14,7 +16,7 @@ sub new {
 
 =over 4
 
-=item get()
+=item get(@raw_packets)
 
 Transforms raw packets to the Net::TacacsPlus::Packet object.
 
@@ -22,11 +24,13 @@ Transforms raw packets to the Net::TacacsPlus::Packet object.
 
 sub get {
 	my $self = shift;
+	
+	
 }
 
-=item pub()
+=item pub(@packet_objects)
 
-Trnasforms Net::TacacsPlus::Packet to the binary packet form.
+Transforms Net::TacacsPlus::Packet to the binary packet form.
 
 =cut
 
