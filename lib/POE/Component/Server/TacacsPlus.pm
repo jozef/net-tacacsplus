@@ -1,113 +1,114 @@
 package POE::Component::Server::TacacsPlus;
 
 use strict;
+use warnings;
+
 use Socket qw(inet_ntoa);
-use POE qw(
+use POE qw{
 	Wheel::SocketFactory
 	Wheel::ReadWrite
-	Filter::Line
+	Filter::Tacacs
 	Driver::SysRW
-);
-our PORT => 49;
+};
+our $SERVER_PORT => 49;
 
 sub start {
 	POE::Session->create(
 		inline_states => {
-			_start => \&server_start,
+			_start            => \&server_start,
 			accept_new_client => \&accept_new_client,
-			accept_failed => \&accept_failed,
-	    _stop  => \&server_stop,
-	  },
+			accept_failed     => \&accept_failed,
+			_stop             => \&server_stop,
+		},
 	);
 	
 	$poe_kernel->run();
 }
 
 sub server_start {
-  $_[HEAP]->{listener} = new POE::Wheel::SocketFactory
-    ( BindPort     => PORT,
-      Reuse        => 'yes',
-      SuccessEvent => "accept_new_client",
-      FailureEvent => "accept_failed",
-    );
-  print "SERVER: Started listening on port ", PORT, ".\n";
+	$_[HEAP]->{listener} = new POE::Wheel::SocketFactory(
+  		BindPort     => $SERVER_PORT,
+		Reuse        => 'yes',
+		SuccessEvent => "accept_new_client",
+		FailureEvent => "accept_failed",
+	);
+	print "SERVER: Started listening on port ", $SERVER_PORT, ".\n";
 }
-
 
 sub server_stop {
-  print "SERVER: Stopped.\n";
+	print "SERVER: Stopped.\n";
 }
 
-
 sub accept_new_client {
-  my ($socket, $peeraddr, $peerport) = @_[ARG0 .. ARG2];
-  $peeraddr = inet_ntoa($peeraddr);
+	my ($socket, $peeraddr, $peerport) = @_[ARG0 .. ARG2];
+	
+	$peer_addr = inet_ntoa($peer_addr);
 
-  POE::Session->create(
-    inline_states => {
-      _start      => \&child_start,
-      _stop       => \&child_stop,
-      child_input => \&child_input,
-      child_done  => \&child_done,
-      child_error => \&child_error,
-    },
-    args => [ $socket, $peeraddr, $peerport ],
-  );
-  print "SERVER: Got connection from $peeraddr:$peerport.\n";
+	POE::Session->create(
+		inline_states => {
+			_start      => \&child_start,
+			_stop       => \&child_stop,
+			child_input => \&child_input,
+			child_done  => \&child_done,
+			child_error => \&child_error,
+		},
+		args => [ $socket, $peeraddr, $peerport ],
+	);
+	print "SERVER: Got connection from $peeraddr:$peerport.\n";
 }
 
 
 sub accept_failed {
-  my ($function, $error) = @_[ARG0, ARG2];
+	my ($function, $error) = @_[ARG0, ARG2];
 
-  delete $_[HEAP]->{listener};
-  print "SERVER: call to $function() failed: $error.\n";
+	delete $_[HEAP]->{listener};
+	print "SERVER: call to $function() failed: $error.\n";
 }
 
 
 sub child_start {
-  my ($heap, $socket) = @_[HEAP, ARG0];
+	my ($heap, $socket) = @_[HEAP, ARG0];
 
-  $heap->{readwrite} = new POE::Wheel::ReadWrite
-    ( Handle => $socket,
-      Driver => new POE::Driver::SysRW (),
-      Filter => new POE::Filter::Line (),
-      InputEvent   => 'child_input',
-      ErrorEvent   => 'child_error',
-    );
-  $heap->{readwrite}->put( "Hello, client!" );
+	$heap->{'readwrite'} = new POE::Wheel::ReadWrite (
+		Handle => $socket,
+		Driver => new POE::Driver::SysRW (),
+		Filter => new POE::Filter::Line (),
+		InputEvent   => 'child_input',
+		ErrorEvent   => 'child_error',
+	);
+	$heap->{'readwrite'}->put("Hello, client!");
 
-  $heap->{peername} = join ':', @_[ARG1, ARG2];
-  print "CHILD: Connected to $heap->{peername}.\n";
+	$heap->{'peername'} = join ':', @_[ARG1, ARG2];
+	print "CHILD: Connected to $heap->{peername}.\n";
 }
 
 
 sub child_stop {
-  print "CHILD: Stopped.\n";
+	print "CHILD: Stopped.\n";
 }
 
 
 sub child_input {
-  my $data = $_[ARG0];
+	my $data = $_[ARG0];
 
-  $data =~ tr{0-9+*/()-}{}cd;
-  return unless length $data;
-  my $result = eval $data;
-  chomp $@;
-  $_[HEAP]->{readwrite}->put( $@ || $result );
-  print "CHILD: Got input from peer: \"$data\" = $result.\n";
+	$data =~ tr{0-9+*/()-}{}cd;
+	return unless length $data;
+	my $result = eval $data;
+	chomp $@;
+	$_[HEAP]->{readwrite}->put( $@ || $result );
+	print "CHILD: Got input from peer: \"$data\" = $result.\n";
 }
 
 
 sub child_done {
-  delete $_[HEAP]->{readwrite};
-  print "CHILD: disconnected from ", $_[HEAP]->{peername}, ".\n";
+	delete $_[HEAP]->{readwrite};
+	print "CHILD: disconnected from ", $_[HEAP]->{peername}, ".\n";
 }
 
 
 sub child_error {
-  my ($function, $error) = @_[ARG0, ARG2];
+	my ($function, $error) = @_[ARG0, ARG2];
 
-  delete $_[HEAP]->{readwrite};
-  print "CHILD: call to $function() failed: $error.\n" if $error;
+	delete $_[HEAP]->{readwrite};
+	print "CHILD: call to $function() failed: $error.\n" if $error;
 }

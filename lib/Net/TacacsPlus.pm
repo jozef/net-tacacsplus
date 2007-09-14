@@ -54,6 +54,9 @@ sub tacacs_client {
 
 1;
 
+=head1 LINKS
+
+Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
 
 =head1 AUTHOR
 
