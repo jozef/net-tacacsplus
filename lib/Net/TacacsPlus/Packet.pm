@@ -259,7 +259,7 @@ Net::TacacsPlus::Packet::AccountReplyBody
 sub decode_raw {
 	my ($self, $raw_pkt) = @_;
 	
-	my ($raw_header,$raw_body) = unpack("A".TAC_PLUS_HEADER_SIZE."A*",$raw_pkt);
+	my ($raw_header,$raw_body) = unpack("a".TAC_PLUS_HEADER_SIZE."a*",$raw_pkt);
 	
 	$self->{'header'} = Net::TacacsPlus::Packet::Header->new('raw_header' => $raw_header);
 	$self->{'seq_no'} = $self->{'header'}->seq_no();
