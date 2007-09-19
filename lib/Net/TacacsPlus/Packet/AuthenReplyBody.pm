@@ -79,12 +79,12 @@ sub decode {
 	$server_msg_len,
 	$data_len,
 	$payload,
-	) = unpack("CCnnA*", $raw_data);
+	) = unpack("CCnna*", $raw_data);
 
 	$payload = '' if not defined $payload; #payload can be empty
 
 	($self->{'server_msg'},
-	$self->{'data'}) = unpack("A".$server_msg_len."A".$data_len,$payload);
+	$self->{'data'}) = unpack("a".$server_msg_len."a".$data_len,$payload);
 }
 
 =item server_msg()

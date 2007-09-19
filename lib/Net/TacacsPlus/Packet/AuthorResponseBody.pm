@@ -92,16 +92,16 @@ sub decode($)
 	) = unpack("CCnn", $raw_data);
 	$offset = 6;
 	
-	@arg_lengths = unpack("x$offset " . ("C" x $arg_cnt), $raw_data);
+	@arg_lengths = unpack("x$offset" . ("C" x $arg_cnt), $raw_data);
 	$offset += $arg_cnt;
 
 	($self->{'server_msg'}, $self->{'data'}) =
-		unpack("x$offset A".$server_msg_len."A".$data_len, $raw_data);
+		unpack("x$offset"."a".$server_msg_len."a".$data_len, $raw_data);
 	$offset += $server_msg_len + $data_len;
 
 	foreach my $arglen (@arg_lengths)
 	{
-		push(@args, unpack("x$offset A$arglen", $raw_data));
+		push(@args, unpack("x$offset"."a$arglen", $raw_data));
 		$offset += $arglen;
 	}
 		

@@ -84,10 +84,10 @@ sub decode($)
 	$data_len,
 	$self->{'status'},
 	$payload,
-	) = unpack("nnCA*", $raw_data);
+	) = unpack("nnCa*", $raw_data);
 	
 	($self->{'server_msg'},
-	$self->{'data'}) = unpack("A".$server_msg_len."A".$data_len,$payload);
+	$self->{'data'}) = unpack("a".$server_msg_len."a".$data_len,$payload);
 }
 
 =item server_msg()

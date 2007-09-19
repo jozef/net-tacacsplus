@@ -269,8 +269,8 @@ sub decode_raw {
 
 	$raw_body = $self->raw_xor_body($raw_body);
 	
-	#odd sequence numbers belong to client
-	if ($self->{'seq_no'} % 2 == 1) {
+	# even sequence numbers are received by the client
+	if ($self->{'seq_no'} % 2 == 0) {
 		if ($self->{'type'} == TAC_PLUS_AUTHEN)
 		{
 			$self->{'body'} = Net::TacacsPlus::Packet::AuthenReplyBody->new('raw_body' => $raw_body);	
@@ -285,7 +285,7 @@ sub decode_raw {
 			die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
 		}
 	}
-	#even sequence numbers belong to server
+	# odd sequence numbers are received by the server
 	else {
 		if ($self->{'type'} == TAC_PLUS_AUTHEN)
 		{
@@ -363,7 +363,7 @@ sub compute_pseudo_pad {
 
 	my ( $data,$md5hash, $hash, $md5len );
 
-	$data = pack("NA*CC",$sess_id,$key,$version,$seq_no);
+	$data = pack("Na*CC",$sess_id,$key,$version,$seq_no);
 	
 	$md5len = 0;
 	$hash = '';
