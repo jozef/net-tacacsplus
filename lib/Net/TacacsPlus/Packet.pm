@@ -107,7 +107,7 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Client
 =cut
 
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 use strict;
 use warnings;
