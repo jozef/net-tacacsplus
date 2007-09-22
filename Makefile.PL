@@ -10,6 +10,8 @@ WriteMakefile(
 		Carp::Clan    => 0,
 		IO::Socket    => 0,
 		Test::More    => 0,
+		Class::Accessor::Fast
+		              => 0,
 	},
 	($] >= 5.005 ?     ## Add these new keywords supported since 5.005
 		(ABSTRACT_FROM => 'lib/Net/TacacsPlus.pm', # retrieve abstract from module

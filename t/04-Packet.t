@@ -35,4 +35,5 @@ can_ok($pkt, qw{
 	raw_xor_body
 	compute_pseudo_pad
 	send
+	type
 });

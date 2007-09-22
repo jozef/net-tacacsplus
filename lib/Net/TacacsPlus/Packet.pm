@@ -98,7 +98,7 @@ Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE
 
 =head1 VERSION
 
-1.05
+1.06
 
 =head1 SEE ALSO
 
@@ -128,6 +128,15 @@ use Carp::Clan;
 use Digest::MD5 ('md5');
 use Math::XOR ('xor_buf');
 
+use base qw{ Class::Accessor::Fast };
+
+__PACKAGE__->mk_accessors(qw{
+	header
+	body
+	key
+	action	
+});
+
 =head1 METHODS
 
 =over 4
@@ -138,90 +147,88 @@ use Math::XOR ('xor_buf');
 
 for header:
 
-	'type': TAC_PLUS_(AUTHEN|AUTHOR|ACCT) 
-	'seq_no': sequencenumber
-	'flags': TAC_PLUS_(UNENCRYPTED_FLAG|SINGLE_CONNECT_FLAG)
+	'type'      : TAC_PLUS_(AUTHEN|AUTHOR|ACCT) 
+	'seq_no'    : sequencenumber
+	'flags'     : TAC_PLUS_(UNENCRYPTED_FLAG|SINGLE_CONNECT_FLAG)
 	'session_id': session id
 
 for authentication START body:
 
-	'action' => TAC_PLUS_AUTHEN_(LOGIN|CHPASS|SENDPASS|SENDAUTH)
-	'authen_type' => TAC_PLUS_AUTHEN_TYPE_(ASCII|PAP)
-	'key': encryption key
+	'action'     : TAC_PLUS_AUTHEN_(LOGIN|CHPASS|SENDPASS|SENDAUTH)
+	'authen_type': TAC_PLUS_AUTHEN_TYPE_(ASCII|PAP)
+	'key'        : encryption key
 
 for authentication CONTINUE body:	
 	'user_msg': msg required by server
-	'data' => data required by server
-    'key': encryption key
+	'data'    : data required by server
+	'key'     : encryption key
 
 for authorization REQUEST body:
 	'user': username
 	'args': authorization arguments
-	'key': encryption key
+	'key' : encryption key
 
 for accounting REQUEST body:
 	'acct_flags': TAC_PLUS_ACCT_FLAG_(MORE|START|STOP|WATCHDOG)
-	'user': username
-	'args': authorization arguments
-	'key': encryption key
+	'user'      : username
+	'args'      : authorization arguments
+	'key'       : encryption key
 
 2. if constructing from received raw packet
 
 for AUTHEN reply, AUTHOR response and ACCT reply:
 
 	'type': TAC_PLUS_(AUTHEN|AUTHOR|ACCT)
-	'raw': raw packet
-	'key': encryption key
+	'raw' : raw packet
+	'key' : encryption key
 
 =cut
 
 sub new {
 	my $class = shift;
 	my %params = @_;
-	my $self = {};
 
-	bless $self, $class;
-
-	#save encryption key
-	$self->{'key'} = $params{'key'};
+	#let the class accessor contruct the object
+	my $self = $class->SUPER::new(\%params);
 
 	#create object from raw packet
 	if ($params{'raw'}) {
 		$self->decode_raw($params{'raw'});
-		
+		delete $self->{'raw'};
 		return $self;	
 	}
-
-	croak "TacacsPlus packet type is required parameter."
-		if (not exists $params{'type'});
-	
-	$self->{'type'} = $params{'type'};
 
 	#compute version byte
 	$params{'major_version'} = $params{'major_version'} ? $params{'major_version'} : TAC_PLUS_MAJOR_VER;
 	$params{'minor_version'} = $params{'minor_version'} ? $params{'minor_version'} : TAC_PLUS_MINOR_VER_DEFAULT;
-	$params{'version'} = $params{'major_version'}*0x10+$params{'minor_version'};
+	$params{'version'}       = $params{'major_version'}*0x10+$params{'minor_version'};
 	
-	$self->{'header'} = Net::TacacsPlus::Packet::Header->new(%params);
+	#construct the packet header
+	$self->header(Net::TacacsPlus::Packet::Header->new(%params));
 
-	if ($params{'type'} == TAC_PLUS_AUTHEN)
+	my $type = $self->type;
+	croak "TacacsPlus packet type is required parameter."
+		if (not defined $type);
+	
+
+	if ($type == TAC_PLUS_AUTHEN)
 	{
 		if ($params{'action'})				#if action is set it is the first START packet
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AuthenStartBody->new(%params);
+			$self->body(Net::TacacsPlus::Packet::AuthenStartBody->new(%params));
 		} elsif ($params{'user_msg'})		#else it is CONTINUE
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AuthenContinueBody->new(%params);
+			$self->body(Net::TacacsPlus::Packet::AuthenContinueBody->new(%params));
 		} else { die("unknown request for body creation"); }
-	} elsif ($params{'type'} == TAC_PLUS_AUTHOR)
+	} elsif ($type == TAC_PLUS_AUTHOR)
 	{
-		$self->{'body'} = Net::TacacsPlus::Packet::AuthorRequestBody->new(%params);
-	} elsif ($params{'type'} == TAC_PLUS_ACCT)
+		$self->body(Net::TacacsPlus::Packet::AuthorRequestBody->new(%params));
+	} elsif ($type == TAC_PLUS_ACCT)
 	{
-		$self->{'body'} = Net::TacacsPlus::Packet::AccountRequestBody->new(%params);
+		$self->body(Net::TacacsPlus::Packet::AccountRequestBody->new(%params));
 	} else
 	{
-		croak('TacacsPlus packet type '.$params{'type'}.' unsupported.');
+		croak('TacacsPlus packet type '.$self->type.' unsupported.');
 	}
 
 	return $self;
@@ -261,44 +268,40 @@ sub decode_raw {
 	
 	my ($raw_header,$raw_body) = unpack("a".TAC_PLUS_HEADER_SIZE."a*",$raw_pkt);
 	
-	$self->{'header'} = Net::TacacsPlus::Packet::Header->new('raw_header' => $raw_header);
-	$self->{'seq_no'} = $self->{'header'}->seq_no();
-	$self->{'session_id'} = $self->{'header'}->session_id();
-	$self->{'version'} = $self->{'header'}->version();
-	$self->{'type'} = $self->{'header'}->type();
+	$self->header(Net::TacacsPlus::Packet::Header->new('raw_header' => $raw_header));
 
 	$raw_body = $self->raw_xor_body($raw_body);
 	
 	# even sequence numbers are received by the client
-	if ($self->{'seq_no'} % 2 == 0) {
-		if ($self->{'type'} == TAC_PLUS_AUTHEN)
+	if ($self->seq_no % 2 == 0) {
+		if ($self->type == TAC_PLUS_AUTHEN)
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AuthenReplyBody->new('raw_body' => $raw_body);	
-		} elsif ($self->{'type'} == TAC_PLUS_AUTHOR)
+			$self->body(Net::TacacsPlus::Packet::AuthenReplyBody->new('raw_body' => $raw_body));	
+		} elsif ($self->type == TAC_PLUS_AUTHOR)
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AuthorResponseBody->new('raw_body' => $raw_body);
-		} elsif ($self->{'type'} == TAC_PLUS_ACCT)
+			$self->body(Net::TacacsPlus::Packet::AuthorResponseBody->new('raw_body' => $raw_body));
+		} elsif ($self->type == TAC_PLUS_ACCT)
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AccountReplyBody->new('raw_body' => $raw_body);
+			$self->body(Net::TacacsPlus::Packet::AccountReplyBody->new('raw_body' => $raw_body));
 		} else
 		{
-			die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
+			die('TacacsPlus packet type '.$self->type.' unsupported.');
 		}
 	}
 	# odd sequence numbers are received by the server
 	else {
-		if ($self->{'type'} == TAC_PLUS_AUTHEN)
+		if ($self->type == TAC_PLUS_AUTHEN)
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AuthenRequestBody->new('raw_body' => $raw_body);	
-		} elsif ($self->{'type'} == TAC_PLUS_AUTHOR)
+			$self->body(Net::TacacsPlus::Packet::AuthenRequestBody->new('raw_body' => $raw_body));	
+		} elsif ($self->type == TAC_PLUS_AUTHOR)
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AuthorRequestBody->new('raw_body' => $raw_body);
-		} elsif ($self->{'type'} == TAC_PLUS_ACCT)
+			$self->body(Net::TacacsPlus::Packet::AuthorRequestBody->new('raw_body' => $raw_body));
+		} elsif ($self->type == TAC_PLUS_ACCT)
 		{
-			$self->{'body'} = Net::TacacsPlus::Packet::AccountRequestBody->new('raw_body' => $raw_body);
+			$self->body(Net::TacacsPlus::Packet::AccountRequestBody->new('raw_body' => $raw_body));
 		} else
 		{
-			die('TacacsPlus packet type '.$self->{'type'}.' unsupported.');
+			die('TacacsPlus packet type '.$self->type.' unsupported.');
 		}
 	}
 }
@@ -313,8 +316,8 @@ sub raw {
 	my $self = shift;
 	my $key = shift;
 	
-	my $header=$self->{'header'}->raw();
-	my $body=$self->raw_xor_body($self->{'body'}->raw());
+	my $header=$self->header->raw();
+	my $body=$self->raw_xor_body($self->body->raw());
 	$header=$header.pack("N",length($body));
 
 	return $header.$body;
@@ -329,11 +332,11 @@ XOR $data by pseudo pas.
 sub raw_xor_body {
 	my ($self,$data) = @_;
 
-	return $data if not $self->{'key'};
+	return $data if not $self->key;
 
 	my $pseudo_pad=compute_pseudo_pad(
 					$self->session_id(),
-					$self->{'key'},
+					$self->key,
 					$self->version(),
 					$self->seq_no(),
 					length($data),
@@ -388,7 +391,7 @@ returns last server msg
 sub server_msg() {
 	my $self = shift;
 	
-	return $self->{'body'}->server_msg();
+	return $self->body->server_msg(@_);
 }
 
 =item seq_no()
@@ -400,7 +403,7 @@ Return packet sequence number.
 sub seq_no() {
 	my $self = shift;
 	
-	return $self->{'header'}->seq_no();
+	return $self->header->seq_no(@_);
 }
 
 =item session_id()
@@ -412,7 +415,7 @@ Return packet session id.
 sub session_id() {
 	my $self = shift;
 	
-	return $self->{'header'}->session_id();
+	return $self->header->session_id(@_);
 }
 
 =item version()
@@ -424,7 +427,7 @@ Return version from packet header
 sub version() {
 	my $self = shift;
 	
-	return $self->{'header'}->version();
+	return $self->header->version(@_);
 }
 
 =item flags()
@@ -436,7 +439,7 @@ Return flags from packet header.
 sub flags() {
 	my $self = shift;
 	
-	return $self->{'header'}->flags();
+	return $self->header->flags(@_);
 }
 
 =item args()
@@ -445,13 +448,12 @@ Return arguments returned by server in authorization response packet.
 
 =cut
 
-sub args()
-{
+sub args() {
 	my $self = shift;
 	
-	if($self->{'type'} == TAC_PLUS_AUTHOR)
+	if($self->type == TAC_PLUS_AUTHOR)
 	{
-		return $self->{'body'}->args();
+		return $self->body->args(@_);
 	} else
 	{
 		die("Arguments only available for authorization response packets")
@@ -487,7 +489,7 @@ status is one of:
 sub status() {
 	my $self = shift;
 	
-	return $self->{'body'}->status();
+	return $self->body->status(@_);
 }
 
 =item send()
@@ -505,6 +507,18 @@ sub send() {
 	croak("error sending packet!") if ($bytes != length($raw_pkt));
 	
 	return $bytes;
+}
+
+=item type()
+
+Returns packet type taken from packet header eg. $self->header->type;
+
+=cut
+
+sub type {
+	my $self = shift;
+	
+	return $self->header->type(@_);
 }
 
 1;

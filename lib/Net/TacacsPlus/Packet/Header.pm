@@ -37,6 +37,16 @@ use 5.006;
 use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
 
+use base qw{ Class::Accessor::Fast };
+
+__PACKAGE__->mk_accessors(qw{
+	version
+	type
+	seq_no
+	flags
+	session_id
+});
+
 =head1 METHODS
 
 =over 4
@@ -49,8 +59,8 @@ Construct tacacs+ packet header object
 
 	'version': protocol version
 	'type': TAC_PLUS_(AUTHEN|AUTHOR|ACCT) 
-	'seq_no': sequencenumber
-	'flags': TAC_PLUS_(UNENCRYPTED_FLAG|SINGLE_CONNECT_FLAG)
+	'seq_no': sequencenumber - default 1
+	'flags': TAC_PLUS_(UNENCRYPTED_FLAG|SINGLE_CONNECT_FLAG) - default none
 	'session_id': session id
 
 2. if constructing from raw packet
@@ -62,22 +72,22 @@ Construct tacacs+ packet header object
 sub new {
 	my $class = shift;
 	my %params = @_;
-	my $self = {};
 	
-	bless $self, $class;
+	#let the class accessor contruct the object
+	my $self = $class->SUPER::new(\%params);	
 
-	if ($params{'raw_header'})
-	{
+	#build header from binary data
+	if ($params{'raw_header'}) {
 		$self->decode($params{'raw_header'});	
 		return $self;
 	}
 
-	$self->{'version'} = $params{'version'};
-	$self->{'type'} = $params{'type'};
-	$self->{'seq_no'} = $params{'seq_no'} ? $params{'seq_no'} : 1;
-	$self->{'flags'} = $params{'flags'} ? $params{'flags'} : 0;
-	carp("session_id must be set!") unless $params{'session_id'};
-	$self->{'session_id'} = $params{'session_id'};
+	#parameters check and default values
+	carp("session_id must be set!") if not defined $self->session_id;
+	carp("version must be set!")    if not defined $self->version;
+	carp("type must be set!")       if not defined $self->type;
+	$self->seq_no(1) if not defined $self->seq_no();
+	$self->flags(0)  if not defined $self->flags();
 
 	return $self;
 }
@@ -91,7 +101,7 @@ Decode $raw_data to version, type, seq_no, flags, session_id, length
 sub decode {
 	my ($self, $raw_data) = @_;
 	
-	( $self->{'version'},
+	( $self->{'version'}, #i dont't use object calls ->xyz() to improve speed a little bit and he it is not really neccesary
 	$self->{'type'},
 	$self->{'seq_no'},
 	$self->{'flags'},
@@ -112,7 +122,7 @@ added.
 sub raw {
 	my $self = shift;
 
-	return pack("CCCCN",
+	return pack("CCCCN", #i dont't use object calls ->xyz() to improve speed a little bit and he it is not really neccesary
 			$self->{'version'},
 			$self->{'type'},
 			$self->{'seq_no'},
@@ -120,71 +130,6 @@ sub raw {
 			$self->{'session_id'},
 			);
 }
-
-=item seq_no()
-
-Return header sequence number.
-
-=cut
-
-sub seq_no() {
-	my $self = shift;
-
-	return $self->{'seq_no'};
-}
-
-=item session_id()
-
-Return packet session_id.
-
-=cut
-
-sub session_id {
-	my $self = shift;
-
-	return $self->{'session_id'};
-}
-
-=item version()
-
-Return packet version.
-
-=cut
-
-sub version {
-	my $self = shift;
-
-	return $self->{'version'};
-}
-
-
-
-=item flags()
-
-Return packet flags.
-
-=cut
-
-sub flags {
-	my $self = shift;
-
-	return $self->{'flags'};
-}
-
-=item type()
-
-Return packet type.
-
-=cut
-
-sub type()
-{
-	my $self = shift;
-
-	return $self->{'type'};
-}
-
-1;
 
 =back
 
