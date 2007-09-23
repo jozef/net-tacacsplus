@@ -73,8 +73,7 @@ sub new()
 	#let the class accessor contruct the object
 	my $self = $class->SUPER::new(\%params);
 
-	if ($params{'raw_body'})
-	{
+	if ($params{'raw_body'}) {
 		$self->decode($params{'raw_body'});
 		delete $self->{'raw_body'};
 		return $self;
