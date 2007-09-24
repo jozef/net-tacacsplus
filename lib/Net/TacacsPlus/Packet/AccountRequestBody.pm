@@ -36,7 +36,7 @@ The account REQUEST packet body
 =cut
 
 
-our $VERSION = '1.03';
+our $VERSION = '1.06';
 
 use strict;
 use warnings;

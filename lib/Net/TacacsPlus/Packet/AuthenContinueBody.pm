@@ -25,7 +25,7 @@ Net::TacacsPlus::Packet::AuthenContinueBody - Tacacs+ authentication continue bo
 =cut
 
 
-our $VERSION = '1.03';
+our $VERSION = '1.06';
 
 use strict;
 use warnings;
@@ -33,6 +33,14 @@ use warnings;
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
+
+use base qw{ Class::Accessor::Fast };
+
+__PACKAGE__->mk_accessors(qw{
+	continue_flags
+	user_msg
+	data
+});
 
 =head1 METHODS
 
@@ -44,26 +52,57 @@ Construct tacacs+ authentication CONTINUE packet body object
 
 Parameters:
 
-	'user_msg': user message requested by server
-	'data': data requested by server
-	'flags': TAC_PLUS_CONTINUE_FLAG_ABORT
+	'continue_flags' : TAC_PLUS_CONTINUE_FLAG_ABORT - default none
+	'user_msg'       : user message requested by server
+	'data'           : data requested by server
 
 =cut
 
 sub new() {
 	my $class = shift;
 	my %params = @_;
-	my $self = {};
-	
-	bless $self, $class;
 
-	$self->{'user_msg'} = $params{'user_msg'};
-	$self->{'data'} = $params{'data'};
-	$self->{'flags'} = $params{'continue_flags'} ? $params{'continue_flags'} : 0;
-#	$self->{''} = $params{''} ? $params{''} : TAC_PLUS_;
+	#let the class accessor contruct the object
+	my $self = $class->SUPER::new(\%params);
+
+	if ($params{'raw_body'}) {
+		$self->decode($params{'raw_body'});
+		delete $self->{'raw_body'};
+		return $self;
+	}
+
+	$self->continue_flags = 0 if not defined $self->continue_flags;
 
 	return $self;
 }
+
+
+=item decode($raw_body)
+
+Construct body object from raw data.
+
+=cut
+
+sub decode {
+	my ($self, $raw_body) = @_;
+
+	my $user_msg_length;
+	my $data_length;
+	my $payload;
+	
+	(
+		$user_msg_length,
+		$data_length,
+		$self->{'continue_flags'},
+		$payload,
+	) = unpack('nnCa*', $raw_body);
+
+	(
+		$self->{'user_msg'},
+		$self->{'data'},
+	) = unpack('a'.$user_msg_length.'a'.$data_length, $payload);
+}
+
 
 =item raw()
 
@@ -77,7 +116,7 @@ sub raw {
 	my $body = pack("nnC",
 		length($self->{'user_msg'}),
 		length($self->{'data'}),
-		$self->{'flags'},
+		$self->{'continue_flags'},
 	).$self->{'user_msg'}.$self->{'data'};
 
 	return $body;
