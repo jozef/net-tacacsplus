@@ -71,7 +71,7 @@ sub new() {
 		return $self;
 	}
 
-	$self->continue_flags = 0 if not defined $self->continue_flags;
+	$self->continue_flags(0) if not defined $self->continue_flags;
 
 	return $self;
 }

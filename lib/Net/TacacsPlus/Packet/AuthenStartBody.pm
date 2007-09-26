@@ -27,7 +27,7 @@ The authentication START packet body
 =cut
 
 
-our $VERSION = '1.03';
+our $VERSION = '1.06';
 
 use strict;
 use warnings;
@@ -35,6 +35,19 @@ use warnings;
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
+
+use base qw{ Class::Accessor::Fast };
+
+__PACKAGE__->mk_accessors(qw{
+	action
+	priv_lvl
+	authen_type
+	service
+	user
+	data
+	port
+	rem_addr
+});
 
 =head1 METHODS
 
@@ -46,36 +59,82 @@ Construct tacacs+ authentication START packet body object
 
 Parameters:
 
-	action: TAC_PLUS_AUTHEN_[^_]+$
-	priv_lvl: TAC_PLUS_PRIV_LVL_*
-	authen_type: TAC_PLUS_AUTHEN_TYPE_*
-	service: TAC_PLUS_AUTHEN_SVC_*
-	user: username
-	password: password
-	port: port dft. 'Virtual00'
-	rem_addr: our ip address
+	action      : TAC_PLUS_AUTHEN_[^_]+$
+	priv_lvl    : TAC_PLUS_PRIV_LVL_*      - default TAC_PLUS_PRIV_LVL_MIN
+	authen_type : TAC_PLUS_AUTHEN_TYPE_*
+	service     : TAC_PLUS_AUTHEN_SVC_*    - default TAC_PLUS_AUTHEN_SVC_LOGIN
+	user        : username
+	data        : data                     - default ''
+	port        : port                     - default 'Virtual00'
+	rem_addr    : our ip address           - default '127.0.0.1'
 
 =cut
 
 sub new {
 	my $class = shift;
 	my %params = @_;
-	my $self = {};
-	
-	bless $self, $class;
 
-	$self->{'action'} = $params{'action'};
-	$self->{'priv_lvl'} = $params{'priv_lvl'} ? $params{'priv_lvl'} : TAC_PLUS_PRIV_LVL_MIN;
-	$self->{'authen_type'} = $params{'authen_type'};
-	$self->{'service'} = $params{'service'} ? $params{'service'} : TAC_PLUS_AUTHEN_SVC_LOGIN;
-	$self->{'user'} = $params{'user'};
-	$self->{'password'} = exists $params{'password'} ? $params{'password'} : '';
-	$self->{'port'} = $params{'port'} ? $params{'port'} : 'Virtual00';
-	$self->{'rem_addr'} = $params{'rem_addr'} ? $params{'rem_addr'} : '127.0.0.1';
-#	$self->{''} = $params{''} ? $params{''} : TAC_PLUS_;
+	#let the class accessor contruct the object
+	my $self = $class->SUPER::new(\%params);
+
+	if ($params{'raw_body'}) {
+		$self->decode($params{'raw_body'});
+		delete $self->{'raw_body'};
+		return $self;
+	}
+
+	$self->priv_lvl(TAC_PLUS_PRIV_LVL_MIN)    if not defined $self->priv_lvl();
+	$self->service(TAC_PLUS_AUTHEN_SVC_LOGIN) if not defined $self->service();
+	$self->data('')                           if not defined $self->data();
+	$self->port('Virtual00')                  if not defined $self->port();
+	$self->rem_addr('127.0.0.1')              if not defined $self->rem_addr();
 
 	return $self;
 }
+
+
+=item decode($raw_data)
+
+Construct object from raw packet.
+
+=cut
+
+sub decode {
+	my ($self, $raw_data) = @_;
+	
+	my $length_user;
+	my $length_port;
+	my $length_rem_addr;
+	my $length_data;
+	my $payload;
+	
+	(
+		$self->{'action'},
+		$self->{'priv_lvl'},
+		$self->{'authen_type'},
+		$self->{'service'},
+		$length_user,
+		$length_port,
+		$length_rem_addr,
+		$length_data,
+		$payload,
+	) = unpack("C8a*", $raw_data);
+
+	(
+		$self->{'user'},
+		$self->{'port'},
+		$self->{'rem_addr'},
+		$self->{'data'},
+	) = unpack(
+		"a".$length_user
+		."a".$length_port
+		."a".$length_rem_addr
+		."a".$length_data
+		,
+		$payload
+	);
+}
+
 
 =item raw()
 
@@ -86,7 +145,7 @@ Return binary data of packet body.
 sub raw {
 	my $self = shift;
 
-	my $body = pack("CCCCCCCC",
+	my $body = pack("C8a*a*a*a*",
 		$self->{'action'},
 		$self->{'priv_lvl'},
 		$self->{'authen_type'},
@@ -94,8 +153,12 @@ sub raw {
 		length($self->{'user'}),
 		length($self->{'port'}),
 		length($self->{'rem_addr'}),
-		length($self->{'password'}),
-	).$self->{'user'}.$self->{'port'}.$self->{'rem_addr'}.$self->{'password'};
+		length($self->{'data'}),
+		$self->{'user'},
+		$self->{'port'},
+		$self->{'rem_addr'},
+		$self->{'data'},
+	);
 
 	return $body;
 }

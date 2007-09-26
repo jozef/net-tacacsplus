@@ -10,6 +10,8 @@ WriteMakefile(
 		Carp::Clan    => 0,
 		IO::Socket    => 0,
 		Test::More    => 0,
+		Test::Differences
+		              => 0,
 		Class::Accessor::Fast
 		              => 0,
 	},

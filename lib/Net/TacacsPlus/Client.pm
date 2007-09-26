@@ -213,7 +213,7 @@ sub authenticate {
 				'action' => TAC_PLUS_AUTHEN_LOGIN,
 				'key' => $self->{'key'},
 				'user' => $username,
-				'password' => $password,
+				'data' => $password,
 				'rem_addr' => inet_ntoa($self->{'tacacsserver'}->sockaddr)
 				);
 		} else {
