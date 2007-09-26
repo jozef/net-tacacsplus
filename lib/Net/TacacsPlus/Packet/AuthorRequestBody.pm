@@ -36,7 +36,7 @@ The authorization REQUEST packet body
 =cut
 
 
-our $VERSION = '1.03';
+our $VERSION = '1.06';
 
 use strict;
 use warnings;
@@ -44,6 +44,19 @@ use warnings;
 use 5.006;
 use Net::TacacsPlus::Constants 1.03;
 use Carp::Clan;
+
+use base qw{ Class::Accessor::Fast };
+
+__PACKAGE__->mk_accessors(qw{
+	authen_method
+	priv_lvl
+	authen_type
+	authen_service
+	user
+	port
+	rem_addr
+	args
+});
 
 =head1 METHODS
 
@@ -55,14 +68,14 @@ Construct tacacs+ authorization REQUEST packet body object
 
 Parameters:
 
-	authen_method: TAC_PLUS_AUTHEN_METH_*
-	priv_lvl: TAC_PLUS_PRIV_LVL_*
-	authen_type: TAC_PLUS_AUTHEN_TYPE_*
-	service: TAC_PLUS_AUTHEN_SVC_*
-	user: username
-	port: port dft. 'Virtual00'
-	rem_addr: our ip address
-	args: args arrayref
+	authen_method : TAC_PLUS_AUTHEN_METH_*
+	priv_lvl      : TAC_PLUS_PRIV_LVL_*
+	authen_type   : TAC_PLUS_AUTHEN_TYPE_*
+	authen_service: TAC_PLUS_AUTHEN_SVC_*
+	user          : username
+	port          : port                     - default 'Virtual00'
+	rem_addr      : our ip address
+	args          : args arrayref
 
 =cut
 
@@ -70,21 +83,75 @@ sub new()
 {
 	my $class = shift;
 	my %params = @_;
-	my $self = {};
-	
-	bless $self, $class;
 
-	$self->{'authen_method'} = $params{'authen_method'} ? $params{'authen_method'} : TAC_PLUS_AUTHEN_METH_TACACSPLUS;
-	$self->{'priv_lvl'} = $params{'priv_lvl'} ? $params{'priv_lvl'} : TAC_PLUS_PRIV_LVL_MIN;
-	$self->{'authen_type'} = $params{'authen_type'} ? $params{'authen_type'} : TAC_PLUS_AUTHEN_TYPE_ASCII;
-	$self->{'authen_service'} = $params{'service'} ? $params{'service'} : TAC_PLUS_AUTHEN_SVC_LOGIN;
-	$self->{'user'} = $params{'user'};
-	$self->{'port'} = $params{'port'} ? $params{'port'} : 'Virtual00';
-	$self->{'rem_addr'} = $params{'rem_addr'} ? $params{'rem_addr'} : '127.0.0.1';
-	$self->{'args'} = $params{'args'};
+	#let the class accessor contruct the object
+	my $self = $class->SUPER::new(\%params);
+
+	if ($params{'raw_body'}) {
+		$self->decode($params{'raw_body'});
+		delete $self->{'raw_body'};
+		return $self;
+	}
+
+	$self->authen_method(TAC_PLUS_AUTHEN_METH_TACACSPLUS) if not defined $self->authen_method;
+	$self->priv_lvl(TAC_PLUS_PRIV_LVL_MIN)                if not defined $self->priv_lvl;
+	$self->authen_type(TAC_PLUS_AUTHEN_TYPE_ASCII)        if not defined $self->authen_type;
+	$self->authen_service(TAC_PLUS_AUTHEN_SVC_LOGIN)      if not defined $self->authen_service;
+	$self->port('Virtual00')                              if not defined $self->port;
+	$self->rem_addr('127.0.0.1')                          if not defined $self->rem_addr;
 
 	return $self;
 }
+
+
+=item decode($raw_data)
+
+Construct object from raw packet.
+
+=cut
+
+sub decode {
+	my ($self, $raw_data) = @_;
+	
+	my $length_user;
+	my $length_port;
+	my $length_rem_addr;
+	my $args_count;
+	my $payload;
+	
+	(
+		$self->{'authen_method'},
+		$self->{'priv_lvl'},
+		$self->{'authen_type'},
+		$self->{'authen_service'},
+		$length_user,
+		$length_port,
+		$length_rem_addr,
+		$args_count,
+		$payload,
+	) = unpack("C8a*", $raw_data);
+
+	my @args_unpack_strings = map { 'a'.$_ } unpack('C'.$args_count, $payload);
+	
+	$payload = substr($payload, $args_count);
+
+	(
+		$self->{'user'},
+		$self->{'port'},
+		$self->{'rem_addr'},
+		$payload,
+	) = unpack(
+		'a'.$length_user
+		.'a'.$length_port
+		.'a'.$length_rem_addr
+		.'a*'
+		,
+		$payload
+	);
+	
+	$self->{'args'} = [ unpack(join('', @args_unpack_strings), $payload) ];
+}
+
 
 =item raw()
 
@@ -96,7 +163,7 @@ sub raw
 {
 	my $self = shift;
 
-	my $body = pack("CCCCCCCC",
+	my $body = pack("C8",
 		$self->{'authen_method'},
 		$self->{'priv_lvl'},
 		$self->{'authen_type'},
@@ -106,11 +173,17 @@ sub raw
 		length($self->{'rem_addr'}),
 		scalar(@{$self->{'args'}}),
 	);
-	foreach my $arg (@{$self->{'args'}})
-	{
-		$body .= pack("C", length($arg));
-	}
-	$body .= $self->{'user'}.$self->{'port'}.$self->{'rem_addr'}.join('', @{$self->{'args'}});
+
+	#add lengths of arguments
+	$body .= pack("C".(scalar @{$self->{'args'}}),
+				map { length($_) } @{$self->{'args'}}
+	);
+	
+	$body .= $self->{'user'}
+				.$self->{'port'}
+				.$self->{'rem_addr'}
+				.join('', @{$self->{'args'}})
+	;
 
 	return $body;
 }
