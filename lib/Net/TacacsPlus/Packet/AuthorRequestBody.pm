@@ -79,8 +79,7 @@ Parameters:
 
 =cut
 
-sub new()
-{
+sub new() {
 	my $class = shift;
 	my %params = @_;
 
@@ -159,8 +158,7 @@ Return binary data of packet body.
 
 =cut
 
-sub raw
-{
+sub raw {
 	my $self = shift;
 
 	my $body = pack("C8",
