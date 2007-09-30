@@ -54,6 +54,8 @@ Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE
 
 tac-rfc.1.78.txt, Net::TacacsPlus::Packet
 
+Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
+
 =head1 TODO
 
 	tacacs+ CHAP, ARAP, MSCHAP authentication

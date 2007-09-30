@@ -29,6 +29,7 @@ sub spawn {
 			@heap,
 		},
 	);
+
 }
 
 sub server_start {
@@ -50,6 +51,7 @@ sub server_stop {
 }
 
 sub accept_new_client {
+	my $heap      = $_[HEAP];
 	my $socket    = $_[ARG0];
 	my $peer_addr = $_[ARG1];
 	my $peer_port = $_[ARG2];
@@ -65,6 +67,9 @@ sub accept_new_client {
 			child_error => \&child_error,
 		},
 		args => [ $socket, $peer_addr, $peer_port ],
+		heap => {
+			'key' => $heap->{'key'}
+		},
 	);
 	DEBUG 'SERVER: Got connection from '.$peer_addr.':'.$peer_port;
 }
@@ -90,8 +95,10 @@ sub child_start {
 
 	$heap->{'readwrite'} = new POE::Wheel::ReadWrite (
 		Handle => $socket,
-		Driver => new POE::Driver::SysRW (),
-		Filter => new POE::Filter::TacacsPlus (),
+		Driver => new POE::Driver::SysRW(),
+		Filter => new POE::Filter::TacacsPlus(
+			'key' => $heap->{'key'}
+		),
 		InputEvent   => 'child_input',
 		ErrorEvent   => 'child_error',
 	);
@@ -109,9 +116,10 @@ sub child_input {
 	my $data = $_[ARG0];
 	my $heap = $_[HEAP];
 
-	DEBUG "CHILD: Got input from peer: ".(isa $data);
+	use Data::Dumper;
+	DEBUG "CHILD: Got input from peer: ".Dumper($data);
 	
-	LOGDIE "debug> ".$data->{'type'};
+	LOGDIE "debug> ".$data->type;
 
 #	$heap->{'readwrite'}->put( $@ || $result );
 }

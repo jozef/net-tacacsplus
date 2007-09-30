@@ -292,7 +292,7 @@ sub decode_raw {
 	else {
 		if ($self->type == TAC_PLUS_AUTHEN)
 		{
-			$self->body(Net::TacacsPlus::Packet::AuthenRequestBody->new('raw_body' => $raw_body));	
+			$self->body(Net::TacacsPlus::Packet::AuthenStartBody->new('raw_body' => $raw_body));	
 		} elsif ($self->type == TAC_PLUS_AUTHOR)
 		{
 			$self->body(Net::TacacsPlus::Packet::AuthorRequestBody->new('raw_body' => $raw_body));
