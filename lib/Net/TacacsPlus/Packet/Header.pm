@@ -78,7 +78,8 @@ sub new {
 
 	#build header from binary data
 	if ($params{'raw_header'}) {
-		$self->decode($params{'raw_header'});	
+		$self->decode($params{'raw_header'});
+		delete $self->{'raw_header'};	
 		return $self;
 	}
 

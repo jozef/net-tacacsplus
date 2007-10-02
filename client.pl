@@ -2,9 +2,11 @@
 
 =head1 NAME
 
-client.pl - 
+client.pl - example Tacacs+ client
 
 =head1 SYNOPSIS
+
+	./client.pl
 
 =head1 DESCRIPTION
 

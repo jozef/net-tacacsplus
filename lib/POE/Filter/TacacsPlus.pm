@@ -8,12 +8,12 @@ POE::Filter::TacacsPlus - TacacsPlus packet filter
 
 use Net::TacacsPlus::Packet 1.05;
 
+our $VERSION = 1.06;
+
 
 =head1 METHODS
 
-=over 4
-
-=item new()
+=head2 new()
 
 Construct a filter object.
 
@@ -32,7 +32,8 @@ sub new {
 	return $self;
 }
 
-=item get(@raw_packets)
+
+=head2 get(@raw_packets)
 
 Transforms raw packets to the Net::TacacsPlus::Packet object.
 
@@ -53,7 +54,8 @@ sub get {
 	return \@tacacs_packets;
 }
 
-=item pub(@packet_objects)
+
+=head2 put(@packet_objects)
 
 Transforms Net::TacacsPlus::Packet to the binary packet form.
 
@@ -70,9 +72,5 @@ sub put {
 	
 	return \@tacacs_raw_packets;
 }
-
-=back
-
-=cut
 
 1;

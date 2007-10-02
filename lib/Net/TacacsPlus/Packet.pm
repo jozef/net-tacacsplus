@@ -198,10 +198,12 @@ sub new {
 		return $self;	
 	}
 
-	#compute version byte
-	$params{'major_version'} = $params{'major_version'} ? $params{'major_version'} : TAC_PLUS_MAJOR_VER;
-	$params{'minor_version'} = $params{'minor_version'} ? $params{'minor_version'} : TAC_PLUS_MINOR_VER_DEFAULT;
-	$params{'version'}       = $params{'major_version'}*0x10+$params{'minor_version'};
+	#compute version byte if needed
+	if (not exists $params{'version'}) {
+		$params{'major_version'} = $params{'major_version'} ? $params{'major_version'} : TAC_PLUS_MAJOR_VER;
+		$params{'minor_version'} = $params{'minor_version'} ? $params{'minor_version'} : TAC_PLUS_MINOR_VER_DEFAULT;
+		$params{'version'}       = $params{'major_version'}*0x10+$params{'minor_version'};
+	}
 	
 	#construct the packet header
 	$self->header(Net::TacacsPlus::Packet::Header->new(%params));
@@ -219,6 +221,9 @@ sub new {
 		} elsif ($params{'user_msg'})		#else it is CONTINUE
 		{
 			$self->body(Net::TacacsPlus::Packet::AuthenContinueBody->new(%params));
+		} elsif ($params{'status'})		    #else it is REPLY
+		{
+			$self->body(Net::TacacsPlus::Packet::AuthenReplyBody->new(%params));
 		} else { die("unknown request for body creation"); }
 	} elsif ($type == TAC_PLUS_AUTHOR)
 	{

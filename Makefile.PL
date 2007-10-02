@@ -14,6 +14,8 @@ WriteMakefile(
 		              => 0,
 		Class::Accessor::Fast
 		              => 0,
+		Log::Log4perl => 0,
+		POE           => 0,
 	},
 	($] >= 5.005 ?     ## Add these new keywords supported since 5.005
 		(ABSTRACT_FROM => 'lib/Net/TacacsPlus.pm', # retrieve abstract from module

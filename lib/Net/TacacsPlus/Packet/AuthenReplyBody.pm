@@ -68,6 +68,10 @@ sub new {
 		delete $self->{'raw_body'};
 		return $self;
 	}
+	
+	# set default values
+	$self->server_msg('') if not defined $self->server_msg; 
+	$self->data('')       if not defined $self->data; 
 
 	return $self;
 }
