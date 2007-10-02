@@ -37,7 +37,7 @@ dispatch them to the local functions handlers.
 Currently only PAP requests can be dispatched as this is HIGHLY experimental
 and more like idea then functional code even that the pap is working fine.
 
-I looking forward to you comments and suggestions until i'll invest more time
+I'm looking forward to you comments and suggestions until i'll invest more time
 on it.
 
 =cut
@@ -309,3 +309,15 @@ sub child_error {
 	delete $heap->{'readwrite'};
 	ERROR 'failed '.$operation.' ('.$error_num.') - '.$error_msg if $error_msg;
 }
+
+1;
+
+=head1 SEE ALSO
+
+tac-rfc.1.78.txt
+
+Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
+
+Complete server script C<Net-TacacsPlus/examples/server.pl>.
+
+=cut

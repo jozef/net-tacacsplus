@@ -40,26 +40,6 @@ Net::TacacsPlus::Client - Tacacs+ client library
 
 Currently only PAP and ASCII authentication can be used agains Tacacs+ server.
 
-=head1 AUTHOR
-
-Jozef Kutej - E<lt>jozef@kutej.netE<gt>
-
-Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
-
-=head1 VERSION
-
-1.05
-
-=head1 SEE ALSO
-
-tac-rfc.1.78.txt, Net::TacacsPlus::Packet
-
-Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
-
-=head1 TODO
-
-	tacacs+ CHAP, ARAP, MSCHAP authentication
-
 =cut
 
 
@@ -483,9 +463,31 @@ sub DESTROY {
 	$self->close();
 }
 
-return 1;
+1;
 
 =back
+
+=head1 AUTHOR
+
+Jozef Kutej - E<lt>jozef@kutej.netE<gt>
+
+Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
+
+=head1 VERSION
+
+1.06
+
+=head1 SEE ALSO
+
+tac-rfc.1.78.txt, Net::TacacsPlus::Packet
+
+Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
+
+Complete client script C<Net-TacacsPlus/examples/client.pl>.
+
+=head1 TODO
+
+	tacacs+ CHAP, ARAP, MSCHAP authentication
 
 =head1 COPYRIGHT AND LICENSE
 
