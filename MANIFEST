@@ -28,5 +28,7 @@ lib/Net/TacacsPlus/Packet/AuthorResponseBody.pm
 lib/Net/TacacsPlus/Packet/Header.pm
 lib/POE/Component/Server/TacacsPlus.pm
 lib/POE/Filter/TacacsPlus.pm
+examples/userdb.txt
+examples/log4perl.conf
 examples/client.pl
 examples/server.pl

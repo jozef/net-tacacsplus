@@ -40,6 +40,8 @@ Net::TacacsPlus::Client - Tacacs+ client library
 
 Currently only PAP and ASCII authentication can be used agains Tacacs+ server.
 
+Tested agains Cisco ACS 3.3 and Cisco (ftp://ftp-eng.cisco.com/pub/tacacs/) tac-plus server.
+
 =cut
 
 
