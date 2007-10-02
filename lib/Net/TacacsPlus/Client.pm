@@ -280,7 +280,7 @@ sub authenticate {
 			{
 			} else
 			{
-				croak('unhandled status '.(0 + $status).'');
+				die('unhandled status '.(0 + $status).' (wrong secret key?)'."\n");
 			}
 		} while (($status != TAC_PLUS_AUTHEN_STATUS_FAIL) && ($status != TAC_PLUS_AUTHEN_STATUS_PASS))
 	};
