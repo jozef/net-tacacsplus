@@ -15,16 +15,17 @@ Net::TacacsPlus - Tacacs+ library
 
 =head1 DESCRIPTION
 
-For now tacacs client authentication implemented. See L<Net::TacacsPlus::Client>.
+Tacacs+ client implemented by L<Net::TacacsPlus::Client>.
+Tacacs+ server (pap auth only) implemented by L<POE::Component::Server::TacacsPlus>.
 
 =cut
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 use strict;
 use warnings;
 
-use Net::TacacsPlus::Client 1.05;
+use Net::TacacsPlus::Client 1.06;
 
 use Exporter;
 use 5.006;
