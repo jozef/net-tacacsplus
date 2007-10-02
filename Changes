@@ -1,5 +1,10 @@
 Revision history for Perl extension Net::TacacsPlus.
 
+1.06  Tue Oct 02 20:56:00 2007
+    - unpack bug that was causing from time to time authentication failures even credentials were ok
+    - change objects to use base Class::Accessor::Fast
+    - POE server module
+
 1.05  Fri Sep 07 21:20:00 2007
 	- authorize no more modifies args but has optional thirt parameter to return back the args from server
 	- tests for authorization and accounting

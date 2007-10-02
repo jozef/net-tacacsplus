@@ -7,6 +7,13 @@ t/01-distribution.t
 t/02-Net-TacacsPlus.t
 t/03-Net-TacacsPlus-Client.t
 t/04-Packet.t
+t/05-AccountReplyBody.t
+t/06-AccountRequestBody.t
+t/07-AuthenContinueBody.t
+t/08-AuthenReplyBody.t
+t/09-AuthenStartBody.t
+t/10-AuthorRequestBody.t
+t/11-AuthorResponseBody.t
 lib/Net/TacacsPlus.pm
 lib/Net/TacacsPlus/Client.pm
 lib/Net/TacacsPlus/Packet.pm
