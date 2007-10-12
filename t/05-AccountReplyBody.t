@@ -9,7 +9,7 @@ BEGIN { plan tests => 8 };
 use English;
 
 BEGIN {
-	use_ok ( 'Net::TacacsPlus::Packet 1.06' ) or exit;
+	use_ok ( 'Net::TacacsPlus::Packet' ) or exit;
 	use_ok ( 'Net::TacacsPlus::Constants' ) or exit;
 }
 

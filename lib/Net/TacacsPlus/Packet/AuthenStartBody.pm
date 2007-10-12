@@ -2,7 +2,7 @@ package Net::TacacsPlus::Packet::AuthenStartBody;
 
 =head1 NAME
 
-Net::TacacsPlus::PacketAuthenStartBody - Tacacs+ authentication packet body
+Net::TacacsPlus::Packet::AuthenStartBody - Tacacs+ authentication packet body
 
 =head1 DESCRIPTION
 
