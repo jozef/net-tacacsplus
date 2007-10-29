@@ -106,6 +106,9 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Client
 
 package Net::TacacsPlus::Constants;
 
+use strict;
+use warnings;
+
 our $VERSION = '1.03';
 
 # constants from tac-rfc-1.78.txt + TAC_PLUS_HEADER_SIZE

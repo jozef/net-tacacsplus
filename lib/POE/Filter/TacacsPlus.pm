@@ -6,9 +6,13 @@ POE::Filter::TacacsPlus - TacacsPlus packet filter
 
 =cut
 
-use Net::TacacsPlus::Packet 1.05;
+use strict;
+use warnings;
 
 our $VERSION = 1.06;
+
+
+use Net::TacacsPlus::Packet 1.05;
 
 
 =head1 METHODS
