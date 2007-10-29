@@ -215,7 +215,10 @@ sub import {
 		my $fullname="${pkg}::$name";
 		my $scalar=$tac_plus_const{$name};
 
-		*$fullname = sub () { $scalar };
+		do {
+			no strict 'refs';
+			*$fullname = sub () { $scalar };
+		}
 	}
 }
 
