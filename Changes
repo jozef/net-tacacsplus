@@ -1,5 +1,13 @@
 Revision history for Perl extension Net::TacacsPlus.
 
+1.07  Mon Oct 29 22:18:00 2007
+    - changes for cpants
+      added pod.t and pod-coverage.t
+      MANIFEST
+      use strict
+      6.36 ExtUtils::MakeMaker used
+    - removed version from use_ok because not working in debian sarge
+
 1.06  Tue Oct 02 20:56:00 2007
     - unpack bug that was causing from time to time authentication failures even credentials were ok
     - change objects to use base Class::Accessor::Fast
