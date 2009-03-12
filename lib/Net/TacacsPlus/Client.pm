@@ -23,7 +23,7 @@ Net::TacacsPlus::Client - Tacacs+ client library
 	{
 		print "Authorization successful.\n";
 		print "Arguments received from server:\n";
-		print join("\n", @{$args_response});
+		print join("\n", @args_response);
 	} else {
 		print "Authorization failed: " . $tac->errmsg() . "\n";
 	}

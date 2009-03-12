@@ -20,7 +20,7 @@ Tacacs+ server (pap auth only) implemented by L<POE::Component::Server::TacacsPl
 
 =cut
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use strict;
 use warnings;
