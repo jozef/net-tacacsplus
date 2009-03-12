@@ -471,7 +471,7 @@ sub DESTROY {
 
 =head1 AUTHOR
 
-Jozef Kutej - E<lt>jozef@kutej.netE<gt>
+Jozef Kutej - E<lt>jkutej@cpan.orgE<gt>
 
 Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
 
@@ -482,8 +482,6 @@ Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE
 =head1 SEE ALSO
 
 tac-rfc.1.78.txt, Net::TacacsPlus::Packet
-
-Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
 
 Complete client script C<Net-TacacsPlus/examples/client.pl>.
 

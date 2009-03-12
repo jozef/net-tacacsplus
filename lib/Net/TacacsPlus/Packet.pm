@@ -92,7 +92,7 @@ from parameters or from raw received packet.
 
 =head1 AUTHOR
 
-Jozef Kutej E<lt>jozef@kutej.netE<gt>
+Jozef Kutej E<lt>jkutej@cpan.orgE<gt>
 
 Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
 

@@ -316,8 +316,6 @@ sub child_error {
 
 tac-rfc.1.78.txt
 
-Net::TacacsPlus Trac page L<http://trac.cle.sk/Net-TacacsPlus/>
-
 Complete server script C<Net-TacacsPlus/examples/server.pl>.
 
 =cut
