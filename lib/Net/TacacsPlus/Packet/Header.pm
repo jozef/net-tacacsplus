@@ -28,7 +28,7 @@ packet:
 
 =cut
 
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 use strict;
 use warnings;
@@ -45,6 +45,7 @@ __PACKAGE__->mk_accessors(qw{
 	seq_no
 	flags
 	session_id
+	length
 });
 
 =head1 METHODS
