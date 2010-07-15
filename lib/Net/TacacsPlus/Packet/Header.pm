@@ -45,6 +45,7 @@ __PACKAGE__->mk_accessors(qw{
 	seq_no
 	flags
 	session_id
+	length
 });
 
 =head1 METHODS

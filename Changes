@@ -1,7 +1,14 @@
 Revision history for Perl extension Net::TacacsPlus.
 
 1.09  Thu Jul 15 19:00:00 2010
+    - added rem_addr and port arguments to authenticate(), authorize() and account()
+    - implemented recv_reply method for receiving TAC+ reply packet from the server.
+      recv_reply is more robust and can deal with interrupted system calls and
+      packet fragmentation.
     - #59411 using plain ^ instead of non-existing Math::XOR (thanks to Derik)
+
+1.08  Thu Mar 12 00:00:00 2009
+    - 
 
 1.07  Mon Oct 29 22:18:00 2007
     - changes for cpants

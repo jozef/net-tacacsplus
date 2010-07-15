@@ -57,6 +57,7 @@ use IO::Socket;
 use Exporter;
 use 5.006;
 use Fcntl qw(:DEFAULT);
+use POSIX qw( EINTR );
 use English qw( -no_match_vars );
 
 use Net::TacacsPlus::Constants 1.03;
@@ -146,6 +147,7 @@ sub init_tacacs_session
 		if not defined $remote;
 	
 	$self->tacacsserver($remote);
+	$self->tacacsserver->blocking(0); # should not block because we use select()
 	$self->session_id(int(rand(2 ** 32 - 1)));	#2 ** 32 - 1
 	$self->seq_no(1);
 	$self->errmsg('');
@@ -160,20 +162,24 @@ Returns latest error message
 username		- tacacs+ username
 password		- tacacs+ user password
 authen_type		- TAC_PLUS_AUTHEN_TYPE_ASCII | TAC_PLUS_AUTHEN_TYPE_PAP
+rem_addr                - remote client address (optional, default is 127.0.0.1)
+port                    - remote client port (optional, default is Virtual00)
 
 =cut
 
 sub authenticate {
-	my ($self,$username,$password,$authen_type) = @_;
-
-	#init session. will die if unable to connect.
-	$self->init_tacacs_session();
+	my ($self,$username,$password,$authen_type,$rem_addr,$port) = @_;
 
 	my $status;
 	eval {
+		#init session. will die if unable to connect.
+		$self->init_tacacs_session(); # moved within eval
+
 		#tacacs+ START packet
 		my $pkt;
 
+		$rem_addr = '127.0.0.1' if !defined $rem_addr;
+		$port = 'Virtual00' if !defined $port;
 		if ($authen_type == TAC_PLUS_AUTHEN_TYPE_ASCII)
 		{
 			$pkt = Net::TacacsPlus::Packet->new(
@@ -187,7 +193,8 @@ sub authenticate {
 				'action' => TAC_PLUS_AUTHEN_LOGIN,
 				'user' => $username,
 				'key' => $self->key,
-				'rem_addr' => inet_ntoa($self->tacacsserver->sockaddr)
+				'rem_addr' => $rem_addr,
+				'port' => $port,
 				);
 		} elsif ($authen_type == TAC_PLUS_AUTHEN_TYPE_PAP)
 		{
@@ -204,7 +211,8 @@ sub authenticate {
 				'key' => $self->key,
 				'user' => $username,
 				'data' => $password,
-				'rem_addr' => inet_ntoa($self->tacacsserver->sockaddr)
+				'rem_addr' => $rem_addr,
+				'port' => $port,
 				);
 		} else {
 			croak ('unsupported "authen_type" '.$authen_type.'.');
@@ -215,15 +223,7 @@ sub authenticate {
 		#loop through REPLY/CONTINUE packets
 		do {
 			#receive reply packet
-			my $raw_reply;
-			$self->tacacsserver->recv($raw_reply,1024);
-			croak ("reply read error ($raw_reply).") if not length($raw_reply);
-
-			my $reply = Net::TacacsPlus::Packet->new(
-						'type' => TAC_PLUS_AUTHEN,
-						'raw' => $raw_reply,
-						'key' => $self->key,
-						);
+			my $reply = $self->recv_reply(TAC_PLUS_AUTHEN);
 
 			Net::TacacsPlus::Packet->check_reply($pkt,$reply);
 			$self->seq_no($reply->seq_no()+1);
@@ -286,12 +286,15 @@ sub authenticate {
 username		- tacacs+ username
 args			- tacacs+ authorization arguments
 args_response   - updated by tacacs+ authorization arguments returned by server (optional)
+rem_addr                - remote client address (optional, default is 127.0.0.1)
+port                    - remote client port (optional, default is Virtual00)
+
 
 =cut
 
 sub authorize
 {
-	my ($self, $username, $args, $args_response) = @_;
+	my ($self, $username, $args, $args_response, $rem_addr, $port) = @_;
 	
 	$args_response = [] if not defined $args_response;		
 	croak 'pass array ref as args_response parameter' if ref $args_response ne 'ARRAY'; 
@@ -301,6 +304,8 @@ sub authorize
 		check_args($args);
 		$self->init_tacacs_session();
 
+		$rem_addr = '127.0.0.1' if !defined $rem_addr;
+		$port = 'Virtual00' if !defined $port;
 		# tacacs+ authorization REQUEST packet
 		my $pkt = Net::TacacsPlus::Packet->new(
 			#header
@@ -314,20 +319,14 @@ sub authorize
 			'user' => $username,
 			'args' => $args,
 			'key' => $self->key,
+			'rem_addr' => $rem_addr,
+			'port' => $port,
 			);
 		
 		$pkt->send($self->tacacsserver);
 		
 		#receive reply packet
-		my $raw_reply;
-		$self->tacacsserver->recv($raw_reply,1024);
-		croak("reply read error ($raw_reply).") if not length($raw_reply);
-
-		my $reply = Net::TacacsPlus::Packet->new(
-					'type' => TAC_PLUS_AUTHOR,
-					'raw' => $raw_reply,
-					'key' => $self->key,
-					);
+		my $reply = $self->recv_reply(TAC_PLUS_AUTHOR);
 
 		Net::TacacsPlus::Packet->check_reply($pkt,$reply);
 		$self->seq_no($reply->seq_no()+1);
@@ -394,16 +393,21 @@ username		- tacacs+ username
 args			- tacacs+ authorization arguments
 flags			- optional: tacacs+ accounting flags
 			  default: TAC_PLUS_ACCT_FLAG_STOP
+rem_addr                - remote client address (optional, default is 127.0.0.1)
+port                    - remote client port (optional, default is Virtual00)
+
 =cut
 
 sub account 
 {
-	my ($self,$username,$args,$flags) = @_;
+	my ($self,$username,$args,$flags,$rem_addr,$port) = @_;
 	
 	my $status;
 	eval {
 		$self->init_tacacs_session();
 
+		$rem_addr = '127.0.0.1' if !defined $rem_addr;
+		$port = 'Virtual00' if !defined $port;
 		# tacacs+ accounting REQUEST packet
 		my $pkt = Net::TacacsPlus::Packet->new(
 			#header
@@ -418,20 +422,14 @@ sub account
 			'user' => $username,
 			'args' => $args,
 			'key' => $self->key,
+			'rem_addr' => $rem_addr,
+			'port' => $port,
 			);
 		
 		$pkt->send($self->tacacsserver);
 		
 		#receive reply packet
-		my $raw_reply;
-		$self->tacacsserver->recv($raw_reply,1024);
-		croak("reply read error ($raw_reply).") if not length($raw_reply);
-
-		my $reply = Net::TacacsPlus::Packet->new(
-					'type' => TAC_PLUS_ACCT,
-					'raw' => $raw_reply,
-					'key' => $self->key,
-					);
+		my $reply = $self->recv_reply(TAC_PLUS_ACCT);
 
 		Net::TacacsPlus::Packet->check_reply($pkt,$reply);
 		$self->seq_no($reply->seq_no()+1);
@@ -459,6 +457,50 @@ sub account
 	return $status;
 }
 
+sub recv_reply {
+	my ($self, $type) = @_;
+
+	my $raw_reply = '';
+	my $reply = undef;
+	my $retry = 0;
+	while($retry <= 5) {
+		$retry++;
+		my $readset = '';
+		vec($readset, fileno($self->tacacsserver), 1) = 1;
+		my $nfound = select($readset, undef, undef, $self->timeout);
+		croak('reply read error: timeout') if $nfound == 0;
+		if($nfound == -1)
+		{
+			next if $! == EINTR;
+			croak("reply read error: $!");
+		}
+		my $buf;
+		my $nread = $self->tacacsserver->recv($buf, 1024);
+		if(!defined $nread)
+		{
+			next if $! == EINTR;
+			croak("reply read error: $!");
+		}
+		$raw_reply .= $buf;
+		if(length($raw_reply) >= TAC_PLUS_HEADER_SIZE)
+		{
+			my ($raw_header,$raw_body) = unpack("a".TAC_PLUS_HEADER_SIZE."a*",$raw_reply);
+			my $header = Net::TacacsPlus::Packet::Header->new('raw_header' => $raw_header);
+			if(length($raw_body) >= $header->length)
+			{
+				$reply = Net::TacacsPlus::Packet->new(
+						'type' => $type,
+						'raw' => $raw_reply,
+						'key' => $self->key,
+						);
+				last;
+			}
+		}
+	}
+	croak("reply read error: maximum retry count exceeded") if !defined $reply;
+	return $reply;
+}
+
 sub DESTROY {
 	my $self = shift;
 
@@ -477,7 +519,7 @@ Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE
 
 =head1 VERSION
 
-1.06
+1.07
 
 =head1 SEE ALSO
 
@@ -498,3 +540,4 @@ it under the same terms as Perl itself, either Perl version 5.8.4 or,
 at your option, any later version of Perl 5 you may have available.
 
 =cut
+
