@@ -47,7 +47,7 @@ Tested agains Cisco ACS 3.3 and Cisco (ftp://ftp-eng.cisco.com/pub/tacacs/) tac-
 
 package Net::TacacsPlus::Client;
 
-our $VERSION = '1.06';
+our $VERSION = '1.09';
 
 use strict;
 use warnings;

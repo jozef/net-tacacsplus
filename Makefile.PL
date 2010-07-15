@@ -5,7 +5,6 @@ WriteMakefile(
 	NAME         => 'Net::TacacsPlus',
 	VERSION_FROM => 'lib/Net/TacacsPlus.pm', # finds $VERSION
 	PREREQ_PM    => {
-		Math::XOR     => 0,
 		Digest::MD5   => 0,
 		Carp::Clan    => 0,
 		IO::Socket    => 0,

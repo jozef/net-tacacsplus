@@ -28,7 +28,7 @@ The accounting REPLY packet body
 =cut
 
 
-our $VERSION = '1.06';
+our $VERSION = '1.09';
 
 use strict;
 use warnings;

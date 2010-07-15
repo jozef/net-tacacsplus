@@ -107,7 +107,7 @@ tac-rfc.1.78.txt, Net::TacacsPlus::Client
 =cut
 
 
-our $VERSION = '1.06';
+our $VERSION = '1.09';
 
 use strict;
 use warnings;
@@ -126,7 +126,6 @@ use Net::TacacsPlus::Packet::AuthorResponseBody;
 
 use Carp::Clan;
 use Digest::MD5 ('md5');
-use Math::XOR ('xor_buf');
 
 use base qw{ Class::Accessor::Fast };
 
@@ -347,7 +346,7 @@ sub raw_xor_body {
 					length($data),
 					);
 	
-	$data=xor_buf($data,$pseudo_pad);
+	$data=$data ^ $pseudo_pad;
 
 	return $data;
 }

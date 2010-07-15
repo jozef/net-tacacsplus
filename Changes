@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::TacacsPlus.
 
+1.09  Thu Jul 15 19:00:00 2010
+    - #59411 using plain ^ instead of non-existing Math::XOR (thanks to Derik)
+
 1.07  Mon Oct 29 22:18:00 2007
     - changes for cpants
       added pod.t and pod-coverage.t
