@@ -2,7 +2,6 @@ Changes
 Makefile.PL
 MANIFEST
 README
-t/00-signature.t
 t/01-distribution.t
 t/02-Net-TacacsPlus.t
 t/03-Net-TacacsPlus-Client.t
