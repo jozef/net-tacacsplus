@@ -457,6 +457,14 @@ sub account
 	return $status;
 }
 
+=item recv_reply(type)
+
+method for receiving TAC+ reply packet from the server.
+
+C<type> is a L<Net::TacacsPlus::Packet> type.
+
+=cut
+
 sub recv_reply {
 	my ($self, $type) = @_;
 
