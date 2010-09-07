@@ -75,6 +75,7 @@ __PACKAGE__->mk_accessors(qw{
 	session_id
 	seq_no
 	errmsg
+	server_msg
 	authen_method
 	authen_type
 });
@@ -227,6 +228,8 @@ sub authenticate {
 
 			Net::TacacsPlus::Packet->check_reply($pkt,$reply);
 			$self->seq_no($reply->seq_no()+1);
+			
+			$self->server_msg($reply->server_msg);
 
 			$status=$reply->status();
 			if ($status == TAC_PLUS_AUTHEN_STATUS_GETUSER)
