@@ -160,16 +160,17 @@ Returns latest error message
 
 =item authenticate(username, password, authen_type)
 
-username		- tacacs+ username
-password		- tacacs+ user password
-authen_type		- TAC_PLUS_AUTHEN_TYPE_ASCII | TAC_PLUS_AUTHEN_TYPE_PAP
-rem_addr                - remote client address (optional, default is 127.0.0.1)
-port                    - remote client port (optional, default is Virtual00)
+username        - tacacs+ username
+password        - tacacs+ user password
+authen_type     - TAC_PLUS_AUTHEN_TYPE_ASCII | TAC_PLUS_AUTHEN_TYPE_PAP
+rem_addr        - remote client address (optional, default is 127.0.0.1)
+port            - remote client port (optional, default is Virtual00)
+new_password    - if set (other than undef) will trigger password change
 
 =cut
 
 sub authenticate {
-	my ($self,$username,$password,$authen_type,$rem_addr,$port) = @_;
+	my ($self,$username,$password,$authen_type,$rem_addr,$port,$new_password) = @_;
 
 	my $status;
 	eval {
@@ -191,7 +192,7 @@ sub authenticate {
 				'session_id' => $self->session_id,
 				'authen_type' => $authen_type,
 				#start
-				'action' => TAC_PLUS_AUTHEN_LOGIN,
+				'action' => (defined $new_password ? TAC_PLUS_AUTHEN_CHPASS : TAC_PLUS_AUTHEN_LOGIN),
 				'user' => $username,
 				'key' => $self->key,
 				'rem_addr' => $rem_addr,
@@ -245,7 +246,7 @@ sub authenticate {
 					'key' => $self->key,
 					);
 				$pkt->send($self->tacacsserver);
-			} elsif ($status == TAC_PLUS_AUTHEN_STATUS_GETPASS)
+			} elsif ($status == TAC_PLUS_AUTHEN_STATUS_GETDATA)
 			{
 				$pkt = Net::TacacsPlus::Packet->new(
 					#header
@@ -254,6 +255,19 @@ sub authenticate {
 					'session_id' => $self->session_id,
 					#continue
 					'user_msg' => $password,
+					'data' => '',
+					'key' => $self->key,
+					);
+				$pkt->send($self->tacacsserver);
+			} elsif ($status == TAC_PLUS_AUTHEN_STATUS_GETPASS)
+			{
+				$pkt = Net::TacacsPlus::Packet->new(
+					#header
+					'type' => TAC_PLUS_AUTHEN,
+					'seq_no' => $self->seq_no,
+					'session_id' => $self->session_id,
+					#continue
+					'user_msg' => (defined $new_password ? $new_password : $password),
 					'data' => '',
 					'key' => $self->key,
 					);

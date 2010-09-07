@@ -2,6 +2,7 @@ Revision history for Perl extension Net::TacacsPlus.
 
 1.10  Tue, 07 Sep 2010 18:22:15 +0200
     - server_msg available (thanks to Neal Gooch)
+    - allow password change within authenticate method call (thanks to Neal Gooch)
 
 1.09  Thu Jul 15 19:00:00 2010
     - added rem_addr and port arguments to authenticate(), authorize() and account()
