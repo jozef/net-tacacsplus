@@ -191,6 +191,12 @@ my %tac_plus_const = (
 	TAC_PLUS_HEADER_SIZE             => 12,
 );
 
+for my $name (keys %tac_plus_const)
+{
+	my $scalar = $tac_plus_const{$name};
+	$tac_plus_const{$name} = sub () { $scalar };
+}
+
 =head1 METHODS
 
 =over 4
@@ -206,18 +212,11 @@ sub import {
 
 	foreach my $name (keys %tac_plus_const)
 	{
-		#check if we don't import something wrong by mistake to the caller
-		unless ($name =~ /^TAC_PLUS_/)
-		{
-			die('constant "'.$name.'" declaration typoo!');
-		}
-
 		my $fullname="${pkg}::$name";
-		my $scalar=$tac_plus_const{$name};
 
 		do {
 			no strict 'refs';
-			*$fullname = sub () { $scalar };
+			*$fullname = $tac_plus_const{$name};
 		}
 	}
 }
