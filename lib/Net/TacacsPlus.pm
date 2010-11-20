@@ -59,7 +59,18 @@ sub tacacs_client {
 
 Jozef Kutej - E<lt>jkutej@cpan.orgE<gt>
 
-Authorization and Accounting contributed by Rubio Vaughan E<lt>rubio@passim.netE<gt>
+=head1 CONTRIBUTORS
+ 
+The following people have contributed to the Net::TacacsPlus by committing their
+code, sending patches, reporting bugs, asking questions, suggesting useful
+advises, nitpicking, chatting on IRC or commenting on my blog (in no particular
+order):
+
+    Rubio Vaughan
+    Derik
+    Neal Gooch
+    Douglas Christopher Wilson
+    Dibarbora Radoslav
 
 =head1 SEE ALSO
 
