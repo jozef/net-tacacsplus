@@ -1,8 +1,5 @@
 Changes
 examples/client.pl
-examples/log4perl.conf
-examples/server.pl
-examples/userdb.txt
 lib/Net/TacacsPlus.pm
 lib/Net/TacacsPlus/Client.pm
 lib/Net/TacacsPlus/Constants.pm
@@ -15,10 +12,8 @@ lib/Net/TacacsPlus/Packet/AuthenStartBody.pm
 lib/Net/TacacsPlus/Packet/AuthorRequestBody.pm
 lib/Net/TacacsPlus/Packet/AuthorResponseBody.pm
 lib/Net/TacacsPlus/Packet/Header.pm
-lib/POE/Component/Server/TacacsPlus.pm
-lib/POE/Filter/TacacsPlus.pm
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 README
 t/01-distribution.t
 t/02-Net-TacacsPlus.t
@@ -31,5 +26,6 @@ t/08-AuthenReplyBody.t
 t/09-AuthenStartBody.t
 t/10-AuthorRequestBody.t
 t/11-AuthorResponseBody.t
+t/12-Net-TacacsPlus-Constant.t
 t/pod-coverage.t
 t/pod.t

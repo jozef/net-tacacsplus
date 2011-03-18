@@ -16,7 +16,6 @@ Net::TacacsPlus - Tacacs+ library
 =head1 DESCRIPTION
 
 Tacacs+ client implemented by L<Net::TacacsPlus::Client>.
-Tacacs+ server (pap auth only) implemented by L<POE::Component::Server::TacacsPlus>.
 
 =cut
 
