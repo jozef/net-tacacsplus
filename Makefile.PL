@@ -16,9 +16,8 @@ WriteMakefile(
 		Log::Log4perl => 0,
 		POE           => 0,
 	},
-	($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-		(ABSTRACT_FROM => 'lib/Net/TacacsPlus.pm', # retrieve abstract from module
-		AUTHOR         => 'Jozef Kutej <jkutej@cpan.org>') : ()),
+	ABSTRACT_FROM => 'lib/Net/TacacsPlus.pm', # retrieve abstract from module
+	AUTHOR        => 'Jozef Kutej <jkutej@cpan.org>',
 	(MM->can('signature_target') ? (SIGN => 1) : ()),
 	LICENSE => 'perl',
 );
