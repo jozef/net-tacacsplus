@@ -33,7 +33,7 @@ The authorization RESPONSE packet body
 =cut
 
 
-our $VERSION = '1.10';
+our $VERSION = '1.10_01';
 
 use strict;
 use warnings;

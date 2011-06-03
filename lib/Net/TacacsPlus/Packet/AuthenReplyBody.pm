@@ -24,7 +24,7 @@ REPLY packet) to the client. The REPLY packet body looks as follows:
 =cut
 
 
-our $VERSION = '1.10';
+our $VERSION = '1.10_01';
 
 use strict;
 use warnings;
