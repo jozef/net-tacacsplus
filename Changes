@@ -1,9 +1,11 @@
 Revision history for Perl extension Net::TacacsPlus.
 
-1.10  Tue, 07 Sep 2010 18:22:15 +0200
+1.10 2011-07-01
     - server_msg available (thanks to Neal Gooch)
     - allow password change within authenticate method call (thanks to Neal Gooch)
     - #63021 faster Net::TacacsPlus::Constants (thanks to Douglas Christopher Wilson)
+    - POE::Component::Server::TacacsPlus and POE::Filter::TacacsPlus have been
+      moved the the distribution POE-Component-Server-TacacsPlus
 
 1.09  Thu Jul 15 19:00:00 2010
     - added rem_addr and port arguments to authenticate(), authorize() and account()

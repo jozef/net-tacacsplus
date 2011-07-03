@@ -19,7 +19,7 @@ Tacacs+ client implemented by L<Net::TacacsPlus::Client>.
 
 =cut
 
-our $VERSION = '1.10_01';
+our $VERSION = '1.10';
 
 use strict;
 use warnings;

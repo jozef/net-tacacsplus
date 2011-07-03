@@ -109,7 +109,7 @@ package Net::TacacsPlus::Constants;
 use strict;
 use warnings;
 
-our $VERSION = '1.10_01';
+our $VERSION = '1.10';
 
 # constants from tac-rfc-1.78.txt + TAC_PLUS_HEADER_SIZE
 my %tac_plus_const = (

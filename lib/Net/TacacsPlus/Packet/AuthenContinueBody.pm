@@ -25,7 +25,7 @@ Net::TacacsPlus::Packet::AuthenContinueBody - Tacacs+ authentication continue bo
 =cut
 
 
-our $VERSION = '1.10_01';
+our $VERSION = '1.10';
 
 use strict;
 use warnings;
